@@ -18,6 +18,10 @@
         android:theme="@style/AppTheme">
         <activity android:name=".DisplayMessageActivity"
                   android:parentActivityName=".MainActivity"></activity>
+        <service
+            android:name=".MyForegroundService"
+            android:foregroundServiceType="location"
+            android:exported="false" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
