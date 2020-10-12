@@ -1,21 +1,18 @@
 package com.example.testapp1;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
-import android.app.Activity;
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 public class DisplayMessageActivity extends AppCompatActivity {
 
@@ -26,49 +23,54 @@ public class DisplayMessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_message);
 
-
-
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
 
         // Capture the layout's TextView and set the string as its text
-        final TextView textView = findViewById(R.id.textView3);
+        final TextView textView = findViewById(R.id.geoLongi);
         textView.setText(message);
+    }
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
+    public void seeLat(View view) {
 
-        // returns PERMISSION_DENIED (-1) or PERMISSON_GRANTED (0)
-        int isPermitted = ContextCompat.checkSelfPermission(this, "ACCESS_FINE_LOCATION");
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            getLocation();
+        } else {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 123);
+            return;
+        }
+    }
 
-        if (isPermitted == 0) {
-            final Activity thisActivity = this;
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-            fusedLocationProviderClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                double lastKnownLongitude = location.getLongitude();
-                                double lastKnownLatitude = location.getLatitude();
-                                textView.setText(Double.toString(lastKnownLatitude));
-                            } else {
-                                // Initializing new locationRequests - one high and one balanced
-                                LocationRequest mLocationRequestHighAccuracy = new LocationRequest().setPriority(100);
-                                LocationRequest mLocationRequestBalancedPowerAccuracy = new LocationRequest().setPriority(102);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getLocation();
+                } else {
+                    // Permission Denied
+                    Toast.makeText( this,"your message" , Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 
-                                // creating a builder and add the locationRequests
-                                LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                                        .addLocationRequest(mLocationRequestHighAccuracy)
-                                        .addLocationRequest(mLocationRequestBalancedPowerAccuracy);
-                                builder.setNeedBle(true);
+    //Get location
+    public  void getLocation(){
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (myLocation == null)
+        {
+            myLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+        }
 
-                                // using the builder to check wether the locationSettings are as needed
-                                Task<LocationSettingsResponse> result =
-                                        LocationServices.getSettingsClient(thisActivity).checkLocationSettings(builder.build());
-                            }
-                        }
-                    });
-        } else if (isPermitted == -1) {
-
-        };
+        TextView textView = findViewById(R.id.geoLongi);
+        TextView textView1 = findViewById(R.id.geoLat);
+        textView.setText(Double.toString(myLocation.getLongitude()));
+        textView1.setText(Double.toString(myLocation.getLatitude()));
     }
 }
