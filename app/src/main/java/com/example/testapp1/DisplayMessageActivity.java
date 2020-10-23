@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -75,6 +76,19 @@ public class DisplayMessageActivity extends AppCompatActivity {
                     Toast.makeText(DisplayMessageActivity.this, "Give access, or app won't work.", Toast.LENGTH_SHORT).show();
                 }
         }
+    }
+
+    protected  void createLocationRequest() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    @Override
+    protected void onResume() {
+        super .onResume();
+        if ()
     }
 
 }
