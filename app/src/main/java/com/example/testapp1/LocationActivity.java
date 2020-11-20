@@ -7,7 +7,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
@@ -19,9 +18,8 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
-public class DisplayMessageActivity extends AppCompatActivity {
+public class LocationActivity extends AppCompatActivity {
 
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
@@ -30,11 +28,31 @@ public class DisplayMessageActivity extends AppCompatActivity {
 
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
     private Location myLastLocation;
+    private Location currentLocation;
+
+    public static final String locationKey = "com.example.testapp1.locationKey";
+
+    private static int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
+    private View decorView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_message);
+        setContentView(R.layout.activity_location);
+
+        decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(uiOptions);
+
+        decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                    decorView.setSystemUiVisibility(uiOptions);
+                }
+            }
+        });
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -52,9 +70,23 @@ public class DisplayMessageActivity extends AppCompatActivity {
                 for (Location location : locationResult.getLocations()) {
                     //Update UI
                     setTextView(location);
+                    currentLocation = location;
                 }
             }
         };
+    }
+
+    public void createSchnitzel(View view) {
+        Intent intent = new Intent(this, SchnitzelCreationActivity.class);
+        intent.putExtra(locationKey, currentLocation);
+
+        startActivity(intent);
+    }
+
+    public void showMapActivity(View view) {
+        Intent intent = new Intent(this, MapsActivity.class);
+
+        startActivity(intent);
     }
 
     public void setTextView(Location location) {
@@ -139,6 +171,16 @@ public class DisplayMessageActivity extends AppCompatActivity {
         if (requestingLocationUpdates) {
             startLocationUpdates();
         }
+        decorView.setSystemUiVisibility(uiOptions);
+        decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                    decorView.setSystemUiVisibility(uiOptions);
+                }
+            }
+        });
     }
 
     @Override

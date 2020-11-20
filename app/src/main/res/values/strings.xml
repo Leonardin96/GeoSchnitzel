@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">TestApp1</string>
     <string name="edit_message">Enter a message</string>
-    <string name="button_send">Send</string>
-    <string name="header_text">What a title</string>
+    <string name="button_create_game">Create</string>
+    <string name="header_text">What do you want to do?</string>
+    <string name="button_play_game">Play</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
