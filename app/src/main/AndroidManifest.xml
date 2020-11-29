@@ -40,7 +40,7 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"></activity>
-        <activity android:name=".SchnitzelCreationActivity" />
+        <activity android:name=".PointOfInterestCreationActivity" />
         <activity
             android:name=".LocationActivity"
             android:parentActivityName=".EntryActivity" />

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import static com.example.testapp1.LocationActivity.locationKey;
 
-public class SchnitzelCreationActivity extends AppCompatActivity {
+public class PointOfInterestCreationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

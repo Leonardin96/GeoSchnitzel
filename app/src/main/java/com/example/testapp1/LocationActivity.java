@@ -19,6 +19,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+
 public class LocationActivity extends AppCompatActivity {
 
     private FusedLocationProviderClient fusedLocationClient;
@@ -43,6 +47,8 @@ public class LocationActivity extends AppCompatActivity {
 
         decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(uiOptions);
+
+        PointOfInterest schnitzel1 = new PointOfInterest("poi1", currentLocation, "Is this a riddle?", Collections.emptyMap(), null);
 
         decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
 
@@ -77,7 +83,7 @@ public class LocationActivity extends AppCompatActivity {
     }
 
     public void createSchnitzel(View view) {
-        Intent intent = new Intent(this, SchnitzelCreationActivity.class);
+        Intent intent = new Intent(this, PointOfInterestCreationActivity.class);
         intent.putExtra(locationKey, currentLocation);
 
         startActivity(intent);
