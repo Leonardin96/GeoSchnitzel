@@ -1,5 +1,6 @@
 package com.example.testapp1;
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.media.Image;
@@ -24,11 +25,12 @@ public class PointOfInterest {
     private Image poiImage;
 
     private String riddleFileName;
-    private String LocationFileName;
+    private String locationFileName;
     private String answersFileName;
     private String imageFileName;
+    private Context appContext;
 
-    public PointOfInterest(String id, Location location, String riddle, Map answers, @Nullable Image image) {
+    public PointOfInterest(String id, Location location, String riddle, @Nullable Map answers, @Nullable Image image, Context activityContext) {
 
         poiId = id;
         poiLocation = location;
@@ -36,12 +38,12 @@ public class PointOfInterest {
         poiAnswers = answers;
         poiImage = image;
 
-        imageFileName = "riddle" + poiId;
-        imageFileName = "location" + poiId;
-        imageFileName = "answers" + poiId;
+        riddleFileName = "riddle" + poiId;
+        locationFileName = "location" + poiId;
+        answersFileName = "answers" + poiId;
         imageFileName = "image" + poiId;
 
-
+        appContext = activityContext.getApplicationContext();
     }
 
     public Location getPoiLocation() {
@@ -65,10 +67,13 @@ public class PointOfInterest {
     * DATA-STORING *
     * ************ *
     * */
-    public void storeData(Context context) throws IOException {
+    public void storeData() throws IOException {
 
-        File riddleFile = new File(context.getFilesDir(), riddleFileName);
-        try(FileOutputStream fos = context.openFileOutput(riddleFileName, Context.MODE_PRIVATE)) {
+        System.out.println("THE CONTEXT");
+        System.out.println(appContext);
+
+        File riddleFile = new File(appContext.getFilesDir(), riddleFileName);
+        try(FileOutputStream fos = appContext.openFileOutput(riddleFileName, Context.MODE_PRIVATE)) {
             fos.write(poiRiddle.getBytes(StandardCharsets.UTF_8));
             fos.close();
         }
@@ -83,8 +88,8 @@ public class PointOfInterest {
      * ************ *
      * */
 
-    public String retrieveData(Context context) throws IOException {
-        FileInputStream fis = context.openFileInput(riddleFileName);
+    public String retrieveData() throws IOException {
+        FileInputStream fis = appContext.openFileInput(riddleFileName);
         InputStreamReader inputStreamReader = new InputStreamReader(fis, StandardCharsets.UTF_8);
 
         StringBuilder stringBuilder = new StringBuilder();

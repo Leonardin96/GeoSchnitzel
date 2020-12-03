@@ -48,8 +48,6 @@ public class LocationActivity extends AppCompatActivity {
         decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(uiOptions);
 
-        PointOfInterest schnitzel1 = new PointOfInterest("poi1", currentLocation, "Is this a riddle?", Collections.emptyMap(), null);
-
         decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
 
             @Override
