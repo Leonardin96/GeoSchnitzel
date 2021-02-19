@@ -4,9 +4,14 @@ import android.location.Location;
 import android.media.Image;
 
 import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
+@Entity
 public class PointOfInterest {
-    @ColumnInfo(name = "poiId") public int poiId;
+    //PK ist Name den der User für die assoziierte Schnitzeljagd auswählt + Ziffer (1-4)
+    @PrimaryKey
+    public int poiID;
 
     public Location poiLocation;
     public String poiHint;
