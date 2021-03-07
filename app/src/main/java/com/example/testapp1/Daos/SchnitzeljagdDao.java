@@ -1,4 +1,4 @@
 package com.example.testapp1.Daos;
 
-public class PoiDao {
+public class SchnitzeljagdDao {
 }
