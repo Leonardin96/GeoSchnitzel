@@ -1,7 +1,6 @@
 package com.example.testapp1.Helper;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.example.testapp1.Daos.SchnitzeljagdDao;
 import com.example.testapp1.Database.SchnitzelDatabase;
@@ -11,36 +10,33 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class PoiLoader {
-    private Context appContext;
-    private int toastDuration;
+
+public class PoiHelper {
     private SchnitzelDatabase schnitzelDB;
     private SchnitzeljagdDao schnitzelDao;
     private Executor executor;
 
-    public PointOfInterest poi1;
-    public PointOfInterest poi2;
-    public PointOfInterest poi3;
-    public PointOfInterest poi4;
 
-    public List<PointOfInterest> allPois;
-
-
-    public PoiLoader (Context context) {
-        appContext = context;
-        toastDuration = Toast.LENGTH_SHORT;
+    public PoiHelper(Context context) {
         schnitzelDB = SchnitzelDatabase.getInstance(context);
         schnitzelDao = schnitzelDB.SchnitzeljagdDao();
         executor = Executors.newSingleThreadExecutor();
     }
-    public void loadAll() {
+    public void loadAll(final loadedListCallback<PointOfInterest> callback) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                allPois = schnitzelDao.loadPOIs();
-                String toastText = "All pois loaded";
-                Toast theToast = Toast.makeText(appContext, toastText, toastDuration);
-                theToast.show();
+                List<PointOfInterest> allPois = schnitzelDao.loadPOIs();
+                callback.onComplete(allPois);
+            }
+        });
+    }
+
+    public void savePoi(final PointOfInterest poi) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                schnitzelDao.insertPOI(poi);
             }
         });
     }
