@@ -1,10 +1,13 @@
 package com.example.testapp1.Helper;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -14,6 +17,12 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
 
 public class LocationHelper {
     // Location related
@@ -30,6 +39,7 @@ public class LocationHelper {
     public LocationHelper(Context context) {
         appContext = context;
         toastDuration = Toast.LENGTH_SHORT;
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(appContext);
     }
 
     public boolean checkPermission() {
@@ -48,8 +58,6 @@ public class LocationHelper {
     }
 
     public void setupLocationRequest(final LocationUpdate<Location> callback) {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(appContext);
-
         locationRequest = new LocationRequest();
         locationRequest.setInterval(10000);
         locationRequest.setFastestInterval(5000);
@@ -68,6 +76,21 @@ public class LocationHelper {
                 }
             }
         };
+    }
+
+
+    @SuppressLint("MissingPermission")
+    public void getLastLocation(actionFinishedCallback callback) {
+        Task<Location> last_location = fusedLocationClient.getLastLocation()
+                .addOnSuccessListener((Activity) appContext, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            Log.i("Last Known Location", location.getLatitude() + " " + location.getLongitude());
+                            callback.onComplete(location);
+                        }
+                    }
+                });
     }
 
     public void startLocationUpdates() {

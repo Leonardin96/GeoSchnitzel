@@ -10,7 +10,9 @@ public class PointOfInterest {
     @PrimaryKey(autoGenerate = false)
     @NonNull
     public String poiID;
-    public String schnitzeljagdName;
+
+    // Key of the table of the scavengerHunt to enable the one-to-many-relationship
+    public String scavengerHuntName;
 
     public Double poiLocationLat;
     public Double poiLocationLong;

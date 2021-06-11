@@ -5,4 +5,15 @@
     <string name="header_text">What do you want to do?</string>
     <string name="button_play_game">Play</string>
     <string name="title_activity_maps">Map</string>
+
+    <!-- activity_maps -->
+    <string name="button_entry_create">Create</string>
+    <string name="button_entry_play">Play</string>
+    <string name="textView_huntName_taken_error">This name is already taken, try another.</string>
+    <string name="button_maps_finish_creation_text">DONE</string>
+    <string name="button_maps_new_poi_text">New POI</string>
+    <string name="button_maps_edit_poi">Edit POI</string>
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

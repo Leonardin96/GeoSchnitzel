@@ -5,13 +5,13 @@ import androidx.room.Relation;
 
 import java.util.List;
 
-public class SchnitzeljagdwithPois {
+public class ScavengerHuntWithPois {
     @Embedded
-    public Schnitzeljagd schnitzeljagd;
+    public ScavengerHunt scavengerHunt;
 
     @Relation(
-            parentColumn = "schnitzeljagdName",
-            entityColumn = "schnitzeljagdName"
+            parentColumn = "scavengerHuntName",
+            entityColumn = "scavengerHuntName"
     )
     public List<PointOfInterest> pois;
 }

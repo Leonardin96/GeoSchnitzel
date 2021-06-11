@@ -23,8 +23,8 @@
         android:id="@+id/geoLongi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="56dp"
-        android:layout_marginBottom="68dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="204dp"
         android:text="TextView"
         android:textAlignment="center"
         android:textSize="18sp"
@@ -33,10 +33,10 @@
 
     <TextView
         android:id="@+id/geoLat"
-        android:layout_width="73dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="56dp"
-        android:layout_marginBottom="68dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="68dp"
+        android:layout_marginBottom="204dp"
         android:text="TextView"
         android:textAlignment="center"
         android:textSize="18sp"
@@ -55,61 +55,77 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageButton
-        android:id="@+id/button_schnitzelFirst"
+        android:id="@+id/button_schnitzelFourth"
         android:layout_width="200dp"
         android:layout_height="125dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="8dp"
         android:adjustViewBounds="true"
         android:backgroundTint="#00FFFFFF"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.065"
-        app:srcCompat="@drawable/button_schnitzel1" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_schnitzelSecond"
+        app:srcCompat="@drawable/button_schnitzel4" />
 
     <ImageButton
         android:id="@+id/button_schnitzelSecond"
         android:layout_width="200dp"
         android:layout_height="125dp"
+        android:layout_marginTop="156dp"
         android:layout_marginEnd="8dp"
         android:adjustViewBounds="true"
         android:backgroundTint="#00FFFFFF"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.065"
         app:srcCompat="@drawable/button_schnitzel2" />
 
     <ImageButton
-        android:id="@+id/button_schnitzelThird"
+        android:id="@+id/button_schnitzelFirst"
         android:layout_width="200dp"
         android:layout_height="125dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="252dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="156dp"
         android:adjustViewBounds="true"
         android:backgroundTint="#00FFFFFF"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_schnitzelFirst"
-        app:layout_constraintVertical_bias="0.081"
-        app:srcCompat="@drawable/button_schnitzel3" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_schnitzel1" />
 
     <ImageButton
-        android:id="@+id/button_schnitzelFourth"
-        android:layout_width="200dp"
+        android:id="@+id/button_schnitzelThird"
+        android:layout_width="178dp"
         android:layout_height="125dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="256dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="60dp"
         android:adjustViewBounds="true"
         android:backgroundTint="#00FFFFFF"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_schnitzelFirst"
+        app:srcCompat="@drawable/button_schnitzel3" />
+
+    <TextView
+        android:id="@+id/textView_schnitzelId"
+        android:text="SchnitzelID"
+        android:textSize="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/button_schnitzelFirst"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_schnitzelSecond"
-        app:layout_constraintVertical_bias="0.079"
-        app:srcCompat="@drawable/button_schnitzel4" />
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_save-Schnitzeljagd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="84dp"
+        android:text="Save"
+        app:layout_constraintBottom_toTopOf="@+id/buttonBack2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

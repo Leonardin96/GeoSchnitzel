@@ -9,6 +9,8 @@ import android.widget.ProgressBar;
 
 import com.example.testapp1.Entities.PointOfInterest;
 import com.example.testapp1.Helper.PoiHelper;
+import com.example.testapp1.Helper.ScavengerHuntSingleton;
+import com.example.testapp1.Helper.actionFinishedCallback;
 import com.example.testapp1.Helper.loadedListCallback;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
     private PoiHelper poiHelper;
 
     // UI-Elements
+    private String poiID;
     private EditText question;
     private EditText answer1;
     private EditText answer2;
@@ -34,12 +37,6 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poi_creation_entry);
-
-        pBar = findViewById(R.id.progressBar);
-
-        if (pBar != null) {
-            pBar.setVisibility(View.GONE);
-        }
 
         poiHelper = new PoiHelper(this);
 
@@ -65,7 +62,7 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
 
         if (viewId == R.id.button_questionCreation) {
             setContentView(R.layout.activity_poi_question_creation);
-            getQuestionLayout();
+            getUIElements();
         } else {
             setContentView(R.layout.activity_poi_hint_creation);
         }
@@ -74,7 +71,7 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
     /**
      * Collects the needed Layout-elements for the activity_poi_question_creation-layout.
      */
-    public void getQuestionLayout() {
+    public void getUIElements() {
         question = findViewById(R.id.editView_question_poi_creation);
         answer1 = findViewById(R.id.editView_answer1_poi_creation);
         answer2 = findViewById(R.id.editView_answer2_poi_creation);
@@ -111,7 +108,12 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
 
         clearEditText(null);
 
-        poiHelper.savePoi(poi1);
+        poiHelper.savePoi(new actionFinishedCallback() {
+            @Override
+            public void onComplete(Object o) {
+                // TODO: Do I need the callback here?
+            }
+        }, poi1);
     }
     /**
      * Method to get called by the callback of the loading process.
@@ -145,7 +147,7 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
             pBar.setVisibility(View.VISIBLE);
         }
 
-        poiHelper.loadAll(new loadedListCallback<PointOfInterest>() {
+        poiHelper.loadPOIs(new loadedListCallback<PointOfInterest>() {
             @Override
             public void onComplete(final List<PointOfInterest> list) {
                 runOnUiThread(new Runnable() {
@@ -155,7 +157,7 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
                     }
                 });
             }
-        });
+        }, ScavengerHuntSingleton.instance.getId());
     }
 
 }

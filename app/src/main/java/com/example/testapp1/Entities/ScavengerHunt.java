@@ -5,8 +5,10 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class Schnitzeljagd {
+public class ScavengerHunt {
     @PrimaryKey(autoGenerate = false)
     @NonNull
-    public String schnitzeljagdName;
+    public String scavengerHuntName;
+
+    public String creatorName;
 }
