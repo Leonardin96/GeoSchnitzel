@@ -31,6 +31,9 @@ public class EntryActivity extends AppCompatActivity {
         startWiggleAnimation();
     }
 
+    /**
+     * Hide the Systems-UI not needed for the activity.
+     */
     private void hideSystemUI() {
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
@@ -53,7 +56,7 @@ public class EntryActivity extends AppCompatActivity {
     }
 
     /**
-     * Starts the pulse-Animation for the title-image.
+     * Starts the pulse-Animation for the buttons.
      */
     public void startWiggleAnimation() {
 
@@ -67,6 +70,7 @@ public class EntryActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 button_create.startAnimation(wiggle);
+                button_play.startAnimation(wiggle);
             }
 
             @Override

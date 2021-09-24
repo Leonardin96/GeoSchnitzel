@@ -10,9 +10,9 @@
         android:id="@+id/textView_title_list_activity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose a Schnitzeljagd"
-        android:textSize="24sp"
         android:fontFamily="@font/bowlbyonesc"
+        android:text="Choose a Scavengerhunt"
+        android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -67,5 +67,19 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recylerView_scavengerhuntlist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline6"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

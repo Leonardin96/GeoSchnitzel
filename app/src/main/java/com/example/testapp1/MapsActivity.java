@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.testapp1.Entities.ScavengerHunt;
 import com.example.testapp1.Helper.LocationHelper;
 import com.example.testapp1.Helper.ScavengerHuntWithPoisHelper;
 import com.example.testapp1.Helper.ScavengerHuntSingleton;
@@ -25,7 +27,9 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +41,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     private GoogleMap mMap;
     private ScavengerHuntWithPoisHelper helper;
     private LocationHelper locationHelper;
+    private ScavengerHuntSingleton scavengerHuntSingleton;
     private Intent toPOICreationIntent;
     private int displayHeight;
 
@@ -48,25 +53,24 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hideSystemUI();
         setContentView(R.layout.activity_maps);
-
-        getUIElements();
-        toggleButtonClearance();
-
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        displayHeight = metrics.heightPixels;
-
         // Set up Helpers and misc
         helper = new ScavengerHuntWithPoisHelper(this);
         locationHelper = new LocationHelper(this);
+        scavengerHuntSingleton = ScavengerHuntSingleton.getInstance();
         toPOICreationIntent = new Intent(this, PointOfInterestCreationActivity.class);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        displayHeight = metrics.heightPixels;
+
+        hideSystemUI();
+        getUIElements();
+        toggleButtonClearance();
         loadScavengerHuntTest();
     }
 
@@ -97,7 +101,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     }
 
     /**
-     * Get all neccessary UI-Elements.
+     * Get all necessary UI-Elements.
      */
     private void getUIElements() {
         button_create_poi = findViewById(R.id.button_maps_create_poi);
@@ -116,10 +120,16 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
                 button_edit_poi.setEnabled(true);
             }
 
-            if (poiList.size() == 4) {
+            if (poiList.size() == 12) {
                 button_create_poi.setEnabled(false);
             }
         }
+    }
+
+    private void setPOIMarkers() {
+        List<PointOfInterest> currentPois = scavengerHuntSingleton.getPOIList();
+        List<LatLng> POIcoordinates;
+
     }
 
     /**
@@ -134,6 +144,13 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        googleMap.clear();
+
+        double calcHeight = displayHeight * 0.8;
+        int paddingTop = (int) calcHeight;
+        ArrayList<LatLng> poiCoordinates = new ArrayList<LatLng>();
+        List<PointOfInterest> pois = scavengerHuntSingleton.getPOIList();
+
         mMap = googleMap;
 
         mMap.setMyLocationEnabled(true);
@@ -149,27 +166,32 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             }
         });
 
-        double calcHeight = displayHeight * 0.8;
-        int paddingTop = (int) calcHeight;
+        for(int iterator = 0; iterator < pois.size(); iterator++) {
+            poiCoordinates.add(
+                    new LatLng(pois.get(iterator).poiLocationLat, pois.get(iterator).poiLocationLong)
+            );
+        }
 
-        mMap.setPadding(0,paddingTop, 0, 0);
-
+        for(int iterator = 0; iterator < poiCoordinates.size(); iterator++) {
+            googleMap.addMarker(new MarkerOptions()
+                    .position(poiCoordinates.get(iterator))
+                    .title("POI " + iterator)
+            );
+        }
         // TODO: Align Location-Button with other Buttons - 24dp.
         /*int padding_in_dp = 6;  // 6 dps
         final float scale = getResources().getDisplayMetrics().density;
         int padding_in_px = (int) (padding_in_dp * scale + 0.5f);*/
     };
 
-    public void setText(List<String> list) {
+    public void setText(String huntName) {
         TextView view = findViewById(R.id.textView_maps_scavengerHuntName);
-        view.setText(list.get(0));
+        view.setText(huntName);
     }
 
 
     public void loadScavengerHuntTest() {
-        helper.loadScavengerHuntName((loadedListCallback<String>) (stringList) -> {
-            runOnUiThread(() -> { setText(stringList); });
-        }, ScavengerHuntSingleton.instance.getId());
+        setText(scavengerHuntSingleton.getCreatorName());
     }
 
     /**
@@ -179,42 +201,52 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     }
 
-    public void setUpNewPOI() {
+    public void setUpNewPOI(int poiNumber, String scavengerHuntName, Location loc) {
+
         PointOfInterest poi = new PointOfInterest();
-        locationHelper.getLastLocation(new actionFinishedCallback() {
-            @Override
-            public void onComplete(Object o) {
-                // TODO: set up the new POI
-            }
-        });
+
+        poi.poiID = "poi" + poiNumber;
+        poi.scavengerHuntName = scavengerHuntName;
+        poi.poiLocationLat = loc.getLatitude();
+        poi.poiLocationLong = loc.getLongitude();
+
+        scavengerHuntSingleton.addPoiToList(poi);
     }
 
-    public void changeActivity() {
-        HashMap<String, Double> intentMap = new HashMap<String, Double>();
+    public void startPoiCreationActivity(View view) {
+        String viewId = view.getResources().getResourceEntryName(view.getId());
 
-        ScavengerHuntSingleton single = ScavengerHuntSingleton.instance;
-        List<PointOfInterest> poiList = single.getPOIList();
+        switch (viewId) {
+            case "button_maps_create_poi":
+                // TODO: Do all of the below;
+                List<PointOfInterest> poiList = scavengerHuntSingleton.getPOIList();
 
-        Integer fakeMarkerNumber = 0;
+                Integer fakeMarkerNumber = 0;
 
-        if (poiList != null) {
-            fakeMarkerNumber = poiList.size() - 1;
+                if (poiList != null) {
+                    fakeMarkerNumber = poiList.size() - 1;
+                }
+
+                final int poiNumber = fakeMarkerNumber * 1;
+
+                locationHelper.getLastLocation(new actionFinishedCallback() {
+                    @Override
+                    public void onComplete(Object o) {
+                        Location loc = (Location) o;
+
+                        setUpNewPOI(poiNumber, scavengerHuntSingleton.getId(), loc);
+
+                        toPOICreationIntent.putExtra("poiNumber", poiNumber);
+                        startActivity(toPOICreationIntent);
+                    }
+                });
+                break;
+            case "button_maps_edit_poi":
+                // TODO: Do the stuff for the editBtn;
+                break;
+            default:
+
         }
-
-        final int markerNumber = fakeMarkerNumber * 1;
-
-        locationHelper.getLastLocation(new actionFinishedCallback() {
-            @Override
-            public void onComplete(Object o) {
-                Location loc = (Location) o;
-
-                intentMap.put("loc_lat", loc.getLatitude());
-                intentMap.put("loc_long", loc.getLongitude());
-                intentMap.put("markerNumber", (double) markerNumber);
-
-                startActivity(toPOICreationIntent);
-            }
-        });
 
 
     }

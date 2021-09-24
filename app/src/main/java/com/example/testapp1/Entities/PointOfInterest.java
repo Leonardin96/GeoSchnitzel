@@ -5,34 +5,19 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(primaryKeys = {"poiID", "scavengerHuntName"})
 public class PointOfInterest {
-    @PrimaryKey(autoGenerate = false)
     @NonNull
     public String poiID;
 
     // Key of the table of the scavengerHunt to enable the one-to-many-relationship
+    @NonNull
     public String scavengerHuntName;
 
     public Double poiLocationLat;
     public Double poiLocationLong;
 
     @ColumnInfo(defaultValue = "")
-    public String poiHint;
-
-    @ColumnInfo(defaultValue = "")
-    public String poiQuestion;
-
-    @ColumnInfo(defaultValue = "")
-    public String poiFirstAnswer;
-
-    @ColumnInfo(defaultValue = "")
-    public String poiSecondAnswer;
-
-    @ColumnInfo(defaultValue = "")
-    public String poiThirdAnswer;
-
-    @ColumnInfo(defaultValue = "")
-    public String poiFourthAnswer;
+    public String poiRiddle;
 
 }

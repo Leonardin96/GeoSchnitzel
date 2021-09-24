@@ -10,7 +10,10 @@ import com.example.testapp1.Daos.ScavengerHuntDao;
 import com.example.testapp1.Entities.PointOfInterest;
 import com.example.testapp1.Entities.ScavengerHunt;
 
-@Database(entities = {ScavengerHunt.class, PointOfInterest.class}, version = 1)
+@Database(
+        version = 2,
+        entities = {ScavengerHunt.class, PointOfInterest.class}
+)
 public abstract class ScavengerHuntDatabase extends RoomDatabase {
     abstract public ScavengerHuntDao SchnitzeljagdDao();
 
@@ -20,7 +23,9 @@ public abstract class ScavengerHuntDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (ScavengerHuntDatabase.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), ScavengerHuntDatabase.class, "Schnitzeljagd_Database").build();
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), ScavengerHuntDatabase.class, "Schnitzeljagd_Database")
+                            .fallbackToDestructiveMigration()
+                            .build();
                 }
             }
         }

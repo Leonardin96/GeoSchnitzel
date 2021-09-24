@@ -1,6 +1,9 @@
 package com.example.testapp1;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,26 +21,34 @@ import com.example.testapp1.Helper.ScavengerHuntWithPoisHelper;
 import com.example.testapp1.Helper.ScavengerHuntSingleton;
 import com.example.testapp1.Helper.dataSetCallback;
 import com.example.testapp1.Helper.loadedListCallback;
+import com.example.testapp1.Helper.scavengerhuntListAdapter;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ScavengerHuntsList extends AppCompatActivity {
+public class ScavengerHuntsList extends AppCompatActivity implements scavengerhuntListAdapter.OnItemListener {
     EditText editText_hunt_id;
     EditText editText_creatorName;
     Button button_done;
     Intent intent;
     ScavengerHuntWithPoisHelper helper;
+    RecyclerView recyclerView;
+
+    List<ScavengerHuntWithPois> hunts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hideSystemUI();
-        setContentView(R.layout.activity_scavengerhunts_list);
         intent = new Intent(this, MapsActivity.class);
         helper = new ScavengerHuntWithPoisHelper(this);
-        setList();
+
+        hideSystemUI();
+        setContentView(R.layout.activity_scavengerhunts_list);
+
+        recyclerView = findViewById(R.id.recylerView_scavengerhuntlist);
+        createList();
     }
 
     /**
@@ -66,18 +77,16 @@ public class ScavengerHuntsList extends AppCompatActivity {
         }
     }
 
-    public void setList() {
+    public void createList() {
         helper.loadAllHunts(new loadedListCallback<ScavengerHuntWithPois>() {
             @Override
             public void onComplete(List<ScavengerHuntWithPois> list) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        for (int x = 0; x < list.size(); x++) {
-                            String tagName = "List Item " + x;
-                            ScavengerHuntWithPois hunt = list.get(x);
-                            String creatorName = hunt.scavengerHunt.creatorName;
-                        }
+                        hunts = list;
+                        // TODO: set empty adapter on main, then fill it as soon as the data is there
+                        setAdapter(list);
                     }
                 });
             }
@@ -90,6 +99,18 @@ public class ScavengerHuntsList extends AppCompatActivity {
     public void changeLayout(View view) {
         setContentView(R.layout.activity_schnitzeljagd_creation_start);
         layoutChanged();
+    }
+
+    /**
+     * Set up the adapter for the recylerView to properly display all the scavengerhunts in the list.
+     * @param huntList
+     */
+    private void setAdapter(List<ScavengerHuntWithPois> huntList) {
+        scavengerhuntListAdapter adapter = new scavengerhuntListAdapter(huntList, this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
     }
 
     /**
@@ -183,6 +204,9 @@ public class ScavengerHuntsList extends AppCompatActivity {
     * Changing activity upon completed creation process.
     */
     public void setUpDone(View view) {
+        // Reset the Singleton to get a fresh instance
+        ScavengerHuntSingleton.reset();
+
         helper.createEmptyHunt(new dataSetCallback() {
             @Override
             public void onComplete(Object o) {
@@ -194,5 +218,20 @@ public class ScavengerHuntsList extends AppCompatActivity {
                 });
             }
         }, editText_hunt_id.getText().toString(), editText_creatorName.getText().toString());
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+        // Reset the singleton to get a fresh instance
+        ScavengerHuntSingleton.reset();
+
+        ScavengerHuntWithPois clickedHunt = hunts.get(position);
+        ScavengerHuntSingleton.getInstance().setHunt(clickedHunt);
+        ScavengerHuntSingleton.getInstance().setCreator(clickedHunt.scavengerHunt.creatorName);
+        ScavengerHuntSingleton.getInstance().setId(clickedHunt.scavengerHunt.scavengerHuntName);
+
+
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
     }
 }

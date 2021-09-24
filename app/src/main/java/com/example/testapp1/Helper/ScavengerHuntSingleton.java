@@ -3,26 +3,34 @@ package com.example.testapp1.Helper;
 import android.util.Log;
 
 import com.example.testapp1.Entities.PointOfInterest;
+import com.example.testapp1.Entities.ScavengerHuntWithPois;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ScavengerHuntSingleton {
     public static ScavengerHuntSingleton instance;
 
-    private String huntId;
-    private String creatorName;
+    private String huntId = "";
+    private String creatorName = "";
 
-    private List<PointOfInterest> pois;
+    private ScavengerHuntWithPois hunt = new ScavengerHuntWithPois();
+    private List<PointOfInterest> pois = new ArrayList<PointOfInterest>();
 
     private ScavengerHuntSingleton() {}
 
     public static void instantiate() {
         if (instance == null) {
-            instance = new ScavengerHuntSingleton();
+            synchronized (ScavengerHuntSingleton.class) {
+                if (instance == null) {
+                    instance = new ScavengerHuntSingleton();
+                }
+            }
         }
-        else {
-            Log.d("ScavengerHuntSingleton", "There already is an instance of the ScavengerHuntSingleton");
-        }
+    }
+
+    public static synchronized void reset(){
+        instance = new ScavengerHuntSingleton();
     }
 
     public static ScavengerHuntSingleton getInstance() {
@@ -37,8 +45,31 @@ public class ScavengerHuntSingleton {
         this.creatorName = creator;
     }
 
-    public void setPOIs(List<PointOfInterest> poiList) {
-        this.pois = poiList;
+    public void setHunt(ScavengerHuntWithPois hunt) {
+        this.hunt = hunt;
+    }
+
+    public ScavengerHuntWithPois getHunt() {
+        return hunt;
+    }
+
+    public PointOfInterest getPoiFromList(int position) {
+        return pois.get(position);
+    }
+
+    public void addPoiToList(PointOfInterest poi) {
+        if (this.pois == null) {
+            this.pois = new ArrayList<PointOfInterest>();
+        }
+        this.pois.add(poi);
+    }
+
+    public void overridePoi(PointOfInterest poi, int poiNumber) {
+        this.pois.set(poiNumber, poi);
+    }
+
+    public void removePoiFromList(int position) {
+        this.pois.remove(position);
     }
 
     public String getId() {

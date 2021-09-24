@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_1">
 
     <TextView
         android:id="@+id/textView2"
@@ -12,10 +12,17 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:gravity="center"
+        android:fontFamily="@font/bowlby_one_sc"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:shadowColor="#383838"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="0.01"
         android:text="Would you like to provide a question or a hint?"
         android:textAlignment="center"
-        android:textSize="18sp"
+        android:textColor="#696969"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,25 +35,42 @@
         android:id="@+id/button_questionCreation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="108dp"
+        android:layout_marginStart="32dp"
         android:layout_marginEnd="124dp"
-        android:layout_marginBottom="280dp"
+        android:background="@drawable/button_background_selector"
+        android:fontFamily="@font/bowlbyonesc"
         android:onClick="changeLayout"
+
         android:text="Question"
+        android:textColor="@color/button_textcolor"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button_hintCreation"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline10" />
 
     <Button
         android:id="@+id/button_hintCreation"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="108dp"
-        android:layout_marginBottom="280dp"
-        android:text="Hint"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/button_background_selector"
+        android:fontFamily="@font/bowlbyonesc"
         android:onClick="changeLayout"
+        android:text="Hint"
+        android:textColor="@color/button_textcolor"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/button_questionCreation" />
+        app:layout_constraintStart_toEndOf="@+id/button_questionCreation"
+        app:layout_constraintTop_toTopOf="@+id/guideline10" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.55" />
 </androidx.constraintlayout.widget.ConstraintLayout>

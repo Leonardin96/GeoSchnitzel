@@ -52,6 +52,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/button_background_selector"
         android:fontFamily="@font/bowlbyonesc"
+        android:onClick="startPoiCreationActivity"
         android:text="@string/button_maps_new_poi_text"
         android:textColor="@color/button_textcolor"
         android:textSize="14sp"
