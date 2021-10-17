@@ -31,6 +31,7 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
 
     // UI-Elements for the riddle-creation-layout
     private EditText riddle;
+    private EditText name;
     private Button btnCancel;
     private Button btnDone;
 
@@ -77,6 +78,7 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
      */
     public void getRiddleUIElements() {
         riddle = findViewById(R.id.editTextTextMultiLine_poicreation);
+        name = findViewById(R.id.editTextTextMultiLine_poicreation2);
         btnCancel = findViewById(R.id.button_poicreation_cancel);
         btnDone = findViewById(R.id.button_poicreation_done);
     }
@@ -87,6 +89,7 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
      */
     public void savePoi(View view) {
         poi.poiRiddle = riddle.getText().toString();
+        poi.poiName =  name.getText().toString();
 
         singleton.overridePoi(poi, poiNumber);
 
@@ -104,6 +107,6 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
      * @param view
      */
     public void goBack(View view) {
-
+        startActivity(toMapIntent);
     }
 }

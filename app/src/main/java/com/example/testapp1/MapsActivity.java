@@ -191,7 +191,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
 
     public void loadScavengerHuntTest() {
-        setText(scavengerHuntSingleton.getCreatorName());
+        setText(scavengerHuntSingleton.getId());
     }
 
     /**
@@ -223,7 +223,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
                 Integer fakeMarkerNumber = 0;
 
-                if (poiList != null) {
+                if (poiList != null && poiList.size() > 0 ) {
                     fakeMarkerNumber = poiList.size() - 1;
                 }
 

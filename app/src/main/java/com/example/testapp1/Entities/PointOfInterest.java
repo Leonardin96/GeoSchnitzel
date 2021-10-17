@@ -20,4 +20,7 @@ public class PointOfInterest {
     @ColumnInfo(defaultValue = "")
     public String poiRiddle;
 
+    @ColumnInfo(defaultValue = "")
+    public String poiName;
+
 }
