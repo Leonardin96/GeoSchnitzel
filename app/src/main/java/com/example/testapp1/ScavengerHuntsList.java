@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.example.testapp1.Entities.ScavengerHuntWithPois;
 import com.example.testapp1.Helper.ScavengerHuntWithPoisHelper;
 import com.example.testapp1.Helper.ScavengerHuntSingleton;
+import com.example.testapp1.Helper.VerticalSpaceItemDecoration;
 import com.example.testapp1.Helper.dataSetCallback;
 import com.example.testapp1.Helper.loadedListCallback;
 import com.example.testapp1.Helper.scavengerhuntListAdapter;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScavengerHuntsList extends AppCompatActivity implements scavengerhuntListAdapter.OnItemListener {
+    private static final int VERTICAL_ITEM_SPACE = 48;
     EditText editText_hunt_id;
     EditText editText_creatorName;
     Button button_done;
@@ -110,6 +112,7 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(VERTICAL_ITEM_SPACE));
         recyclerView.setAdapter(adapter);
     }
 
