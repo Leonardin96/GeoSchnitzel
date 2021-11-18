@@ -19,39 +19,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button_newSchnitzeljagd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:onClick="changeLayout"
-        android:text="NEW"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/button_background_selector"
-        android:fontFamily="@font/bowlbyonesc"
-        android:textColor="@color/button_textcolor"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button_scavengerhuntlist_deleteAll"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline5" />
-
-    <Button
         android:id="@+id/button_scavengerhuntlist_deleteAll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
-        android:onClick="deleteAllHunts"
-        android:text="Delete All Hunts"
         android:background="@drawable/button_background_selector"
         android:fontFamily="@font/bowlbyonesc"
+        android:onClick="deleteAllHunts"
+        android:text="Delete All Hunts"
         android:textColor="@color/button_textcolor"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/button_newSchnitzeljagd"
         app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
     <androidx.constraintlayout.widget.Guideline

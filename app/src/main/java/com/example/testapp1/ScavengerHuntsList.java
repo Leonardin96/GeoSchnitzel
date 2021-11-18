@@ -47,10 +47,15 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
         helper = new ScavengerHuntWithPoisHelper(this);
 
         hideSystemUI();
-        setContentView(R.layout.activity_scavengerhunts_list);
-
-        recyclerView = findViewById(R.id.recylerView_scavengerhuntlist);
-        createList();
+        Log.i("getExtra", getIntent().getStringExtra("pressedBtn"));
+        if (getIntent().getStringExtra("pressedBtn").equals("playBtn")) {
+            setContentView(R.layout.activity_scavengerhunts_list);
+            recyclerView = findViewById(R.id.recylerView_scavengerhuntlist);
+            createList();
+        } else {
+            setContentView(R.layout.activity_schnitzeljagd_creation_start);
+            getScavHuntCreationElements();
+        }
     }
 
     /**
@@ -96,14 +101,6 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
     };
 
     /**
-    * Changing the layout when the user wants to create a new Schnitzeljagd, instead of choosing from an existing one.
-    */
-    public void changeLayout(View view) {
-        setContentView(R.layout.activity_schnitzeljagd_creation_start);
-        layoutChanged();
-    }
-
-    /**
      * Set up the adapter for the recylerView to properly display all the scavengerhunts in the list.
      * @param huntList
      */
@@ -119,7 +116,7 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
     /**
     * Getting the layout elements when the correct layout is displayed.
     */
-    private void layoutChanged() {
+    private void getScavHuntCreationElements() {
         editText_hunt_id = findViewById(R.id.editText_schnitzeljagdname);
         editText_creatorName = findViewById(R.id.editText_creatorname);
         button_done = findViewById(R.id.button_schnitzeljadgcreation_done);
@@ -231,7 +228,8 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
         ScavengerHuntWithPois clickedHunt = hunts.get(position);
         ScavengerHuntSingleton.getInstance().setHunt(clickedHunt);
         ScavengerHuntSingleton.getInstance().setCreator(clickedHunt.scavengerHunt.creatorName);
-        ScavengerHuntSingleton.getInstance().setId(clickedHunt.scavengerHunt.scavengerHuntName);
+        ScavengerHuntSingleton.getInstance().setId(clickedHunt.scavengerHunt.scavengerHuntName)
+        ;
 
 
         Intent intent = new Intent(this, MapsActivity.class);

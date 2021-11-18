@@ -14,7 +14,7 @@ import android.widget.ImageView;
 
 public class EntryActivity extends AppCompatActivity {
 
-    private Intent schnitzelListIntent;
+    private Intent scavengerHuntListIntent;
     // UI Elements
     private Button button_play;
     private Button button_create;
@@ -27,8 +27,10 @@ public class EntryActivity extends AppCompatActivity {
         hideSystemUI();
         setContentView(R.layout.activity_entry);
         findUIElements();
-        schnitzelListIntent = new Intent(this, ScavengerHuntsList.class);
         startWiggleAnimation();
+
+        scavengerHuntListIntent = new Intent(this, ScavengerHuntsList.class);
+
     }
 
     /**
@@ -100,9 +102,12 @@ public class EntryActivity extends AppCompatActivity {
     public void changeActivity(View view) {
         switch(view.getId()) {
             case R.id.button_entry_create:
-                startActivity(schnitzelListIntent);
+                scavengerHuntListIntent.putExtra("pressedBtn", "createBtn");
+                startActivity(scavengerHuntListIntent);
                 break;
             case R.id.button_entry_play:
+                scavengerHuntListIntent.putExtra("pressedBtn", "playBtn");
+                startActivity(scavengerHuntListIntent);
                 break;
             default:
                 throw new RuntimeException("Unkown button ID!");
