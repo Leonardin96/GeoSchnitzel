@@ -1,17 +1,25 @@
 package com.example.testapp1;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.example.testapp1.Entities.ScavengerHunt;
@@ -26,8 +34,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.w3c.dom.Text;
 
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
@@ -49,6 +62,10 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     private Button button_create_poi;
     private Button button_edit_poi;
     private Button button_creation_done;
+
+    //miscellaneous
+    private BitmapDescriptor icon;
+    private Bitmap ic_marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +89,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         getUIElements();
         toggleButtonClearance();
         loadScavengerHuntTest();
+        icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_foreground);
     }
 
     /**
@@ -156,7 +174,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
-
         locationHelper.getLastLocation(new actionFinishedCallback() {
             @Override
             public void onComplete(Object o) {
@@ -175,9 +192,37 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         for(int iterator = 0; iterator < poiCoordinates.size(); iterator++) {
             googleMap.addMarker(new MarkerOptions()
                     .position(poiCoordinates.get(iterator))
-                    .title("POI " + iterator)
-            );
+                    .icon(icon)
+            ).setTag(pois.get(iterator));
         }
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                // TODO: Set up the PopUpWindow for the clicked marker with the associated text and title.
+                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                View popupView = inflater.inflate(R.layout.maps_popup_layout, null);
+
+                final PopupWindow popupWindow = new PopupWindow(popupView, ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT,true);
+                popupWindow.showAtLocation(findViewById(R.id.textView_maps_scavengerHuntName), Gravity.CENTER, 0, 0);
+                popupView.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        popupWindow.dismiss();
+                        return true;
+                    }
+                });
+                 // TODO: Get the correct POI
+                PointOfInterest associatedPoi = (PointOfInterest) marker.getTag();
+
+                TextView popupTitleTextView = popupWindow.getContentView().findViewById(R.id.textView_maps_popup_title);
+                popupTitleTextView.setText(associatedPoi.poiName);
+
+                TextView popupRiddleTextView = popupWindow.getContentView().findViewById(R.id.textView_maps_popup_text);
+                popupRiddleTextView.setText(associatedPoi.poiRiddle);
+
+                return false;
+            }
+        });
         // TODO: Align Location-Button with other Buttons - 24dp.
         /*int padding_in_dp = 6;  // 6 dps
         final float scale = getResources().getDisplayMetrics().density;
@@ -224,7 +269,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
                 Integer fakeMarkerNumber = 0;
 
                 if (poiList != null && poiList.size() > 0 ) {
-                    fakeMarkerNumber = poiList.size() - 1;
+                    fakeMarkerNumber = poiList.size();
                 }
 
                 final int poiNumber = fakeMarkerNumber * 1;
