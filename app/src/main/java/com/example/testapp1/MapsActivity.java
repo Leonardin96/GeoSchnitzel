@@ -64,13 +64,17 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     private Button button_creation_done;
 
     //miscellaneous
+    private Boolean playMode;
     private BitmapDescriptor icon;
     private Bitmap ic_marker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+
+        // check which path the user took and display the corresponding layout
+        checkIntent();
+
         // Set up Helpers and misc
         helper = new ScavengerHuntWithPoisHelper(this);
         locationHelper = new LocationHelper(this);
@@ -86,7 +90,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         displayHeight = metrics.heightPixels;
 
         hideSystemUI();
-        getUIElements();
         toggleButtonClearance();
         loadScavengerHuntTest();
         icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_foreground);
@@ -108,6 +111,23 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     }
 
     /**
+     * Checks with path the user took and then shows the according UI.
+     */
+    private void checkIntent() {
+        String path = getIntent().getStringExtra("pressedBtn");
+
+        if (path == "createBtn") {
+            setContentView(R.layout.activity_maps);
+            getCreateUIElements();
+            playMode = false;
+        } else {
+            setContentView(R.layout.activity_maps_play);
+            getPlayUIElements();
+            playMode = true;
+        }
+    }
+
+    /**
      * Listener as to when the app regains the focus.
      */
     @Override
@@ -119,12 +139,19 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     }
 
     /**
-     * Get all necessary UI-Elements.
+     * Get all necessary UI-Elements for the creation mode.
      */
-    private void getUIElements() {
+    private void getCreateUIElements() {
         button_create_poi = findViewById(R.id.button_maps_create_poi);
         button_edit_poi = findViewById(R.id.button_maps_edit_poi);
         button_creation_done = findViewById(R.id.button_maps_finish_creation);
+    }
+
+    /**
+     * Get all necessary UI-Elements for the play mode.
+     */
+    private void getPlayUIElements() {
+
     }
 
     /**
