@@ -20,10 +20,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executor;
-
 public class LocationHelper {
     // Location related
     public FusedLocationProviderClient fusedLocationClient;
@@ -93,7 +89,7 @@ public class LocationHelper {
                 });
     }
 
-    public void startLocationUpdates() {
+    public void startLocationUpdates(LocationCallback locationCallback) {
         boolean permissionGranted = checkPermission();
         if (permissionGranted == true) {
             fusedLocationClient.requestLocationUpdates(locationRequest,

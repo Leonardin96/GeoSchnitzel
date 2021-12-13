@@ -20,24 +20,8 @@
         app:layout_constraintVertical_bias="0.0"
         tools:context=".MapsActivity" />
 
-    <Button
-        android:id="@+id/button_maps_finish_creation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_background_selector"
-        android:fontFamily="@font/bowlbyonesc"
-        android:onClick="finishCreation"
-        android:text="@string/button_maps_finish_creation_text"
-        android:textColor="@color/button_textcolor"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button_maps_create_poi"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/button_maps_edit_poi"
-        app:layout_constraintTop_toTopOf="@+id/guideline3" />
-
     <TextView
-        android:id="@+id/textView_maps_scavengerHuntName"
+        android:id="@+id/textView_maps_scavengerHuntObjective"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
@@ -46,38 +30,6 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button_maps_create_poi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_background_selector"
-        android:fontFamily="@font/bowlbyonesc"
-        android:onClick="startPoiCreationActivity"
-        android:text="@string/button_maps_new_poi_text"
-        android:textColor="@color/button_textcolor"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/button_maps_finish_creation"
-        app:layout_constraintTop_toTopOf="@+id/guideline3" />
-
-    <Button
-        android:id="@+id/button_maps_edit_poi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_background_selector"
-        android:fontFamily="@font/bowlbyonesc"
-        android:text="@string/button_maps_edit_poi"
-        android:textColor="@color/button_textcolor"
-        android:textSize="14sp"
-        android:enabled="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button_maps_finish_creation"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"

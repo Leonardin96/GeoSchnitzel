@@ -7,12 +7,8 @@ import androidx.fragment.app.FragmentActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,14 +18,15 @@ import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.example.testapp1.Entities.ScavengerHunt;
+import com.example.testapp1.Entities.ScavengerHuntWithPois;
 import com.example.testapp1.Helper.LocationHelper;
 import com.example.testapp1.Helper.ScavengerHuntWithPoisHelper;
 import com.example.testapp1.Helper.ScavengerHuntSingleton;
 import com.example.testapp1.Helper.actionFinishedCallback;
-import com.example.testapp1.Helper.loadedListCallback;
 import com.example.testapp1.Entities.PointOfInterest;
 
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -40,11 +37,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.w3c.dom.Text;
-
-import java.text.AttributedCharacterIterator;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLocationButtonClickListener,
@@ -54,9 +48,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     private GoogleMap mMap;
     private ScavengerHuntWithPoisHelper helper;
     private LocationHelper locationHelper;
+    private ScavengerHuntSingleton singleton;
     private ScavengerHuntSingleton scavengerHuntSingleton;
     private Intent toPOICreationIntent;
-    private int displayHeight;
 
     // UI-Elements
     private Button button_create_poi;
@@ -65,15 +59,13 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
     //miscellaneous
     private Boolean playMode;
+    private ScavengerHuntWithPois playableHunt;
     private BitmapDescriptor icon;
-    private Bitmap ic_marker;
+    private int markerShown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // check which path the user took and display the corresponding layout
-        checkIntent();
 
         // Set up Helpers and misc
         helper = new ScavengerHuntWithPoisHelper(this);
@@ -81,18 +73,18 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         scavengerHuntSingleton = ScavengerHuntSingleton.getInstance();
         toPOICreationIntent = new Intent(this, PointOfInterestCreationActivity.class);
 
+        // check which path the user took, display the corresponding layout and load the the corresponding hunt if needed
+        checkIntent();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
-
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        displayHeight = metrics.heightPixels;
 
         hideSystemUI();
         toggleButtonClearance();
-        loadScavengerHuntTest();
         icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_foreground);
+        markerShown = 0;
     }
 
     /**
@@ -114,15 +106,14 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
      * Checks with path the user took and then shows the according UI.
      */
     private void checkIntent() {
-        String path = getIntent().getStringExtra("pressedBtn");
-
-        if (path == "createBtn") {
+        if (getIntent().getStringExtra("pressedBtn").equals("createBtn")) {
             setContentView(R.layout.activity_maps);
             getCreateUIElements();
             playMode = false;
         } else {
             setContentView(R.layout.activity_maps_play);
             getPlayUIElements();
+            playableHunt = scavengerHuntSingleton.getHunt();
             playMode = true;
         }
     }
@@ -158,8 +149,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
      * Check how many POIS already exist to decide which buttons have to be enabled/disabled.
      */
     private void toggleButtonClearance() {
-        ScavengerHuntSingleton single = ScavengerHuntSingleton.instance;
-        List<PointOfInterest> poiList = single.getPOIList();
+        List<PointOfInterest> poiList = ScavengerHuntSingleton.getInstance().getPOIList();
         if (poiList != null) {
             if (poiList.size() > 0) {
                 button_edit_poi.setEnabled(true);
@@ -169,12 +159,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
                 button_create_poi.setEnabled(false);
             }
         }
-    }
-
-    private void setPOIMarkers() {
-        List<PointOfInterest> currentPois = scavengerHuntSingleton.getPOIList();
-        List<LatLng> POIcoordinates;
-
     }
 
     /**
@@ -191,8 +175,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     public void onMapReady(GoogleMap googleMap) {
         googleMap.clear();
 
-        double calcHeight = displayHeight * 0.8;
-        int paddingTop = (int) calcHeight;
         ArrayList<LatLng> poiCoordinates = new ArrayList<LatLng>();
         List<PointOfInterest> pois = scavengerHuntSingleton.getPOIList();
 
@@ -210,27 +192,56 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
             }
         });
 
-        for(int iterator = 0; iterator < pois.size(); iterator++) {
-            poiCoordinates.add(
-                    new LatLng(pois.get(iterator).poiLocationLat, pois.get(iterator).poiLocationLong)
-            );
+        if (playMode == true) {
+            mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+                @Override
+                public void onMyLocationChange(@NonNull Location location) {
+                    if (location == null) {
+                        return;
+                    }
+                    if (pois != null) {
+                        float[] distanceBetween = new float[4];
+                        Location.distanceBetween(
+                                location.getLatitude(),
+                                location.getLongitude(),
+                                pois.get(markerShown).poiLocationLat,
+                                pois.get(markerShown).poiLocationLong,
+                                distanceBetween
+                        );
+
+                        if (distanceBetween[0] < 5) {
+                            googleMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(pois.get(markerShown).poiLocationLat, pois.get(markerShown).poiLocationLong))
+                            ).setTag(pois.get(markerShown));
+                            markerShown++;
+                        }
+                    }
+                }
+            });
         }
 
-        for(int iterator = 0; iterator < poiCoordinates.size(); iterator++) {
-            googleMap.addMarker(new MarkerOptions()
-                    .position(poiCoordinates.get(iterator))
-                    .icon(icon)
-            ).setTag(pois.get(iterator));
+        if (playMode == false) {
+            for(int iterator = 0; iterator < pois.size(); iterator++) {
+                poiCoordinates.add(
+                        new LatLng(pois.get(iterator).poiLocationLat, pois.get(iterator).poiLocationLong)
+                );
+            }
+
+            for(int iterator = 0; iterator < poiCoordinates.size(); iterator++) {
+                googleMap.addMarker(new MarkerOptions()
+                        .position(poiCoordinates.get(iterator))
+                ).setTag(pois.get(iterator));
+            }
         }
+
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
-                // TODO: Set up the PopUpWindow for the clicked marker with the associated text and title.
                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                 View popupView = inflater.inflate(R.layout.maps_popup_layout, null);
 
                 final PopupWindow popupWindow = new PopupWindow(popupView, ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT,true);
-                popupWindow.showAtLocation(findViewById(R.id.textView_maps_scavengerHuntName), Gravity.CENTER, 0, 0);
+                popupWindow.showAtLocation(findViewById(R.id.textView_maps_scavengerHuntObjective), Gravity.CENTER, 0, 0);
                 popupView.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -238,7 +249,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
                         return true;
                     }
                 });
-                 // TODO: Get the correct POI
+
                 PointOfInterest associatedPoi = (PointOfInterest) marker.getTag();
 
                 TextView popupTitleTextView = popupWindow.getContentView().findViewById(R.id.textView_maps_popup_title);
@@ -250,21 +261,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
                 return false;
             }
         });
-        // TODO: Align Location-Button with other Buttons - 24dp.
-        /*int padding_in_dp = 6;  // 6 dps
-        final float scale = getResources().getDisplayMetrics().density;
-        int padding_in_px = (int) (padding_in_dp * scale + 0.5f);*/
     };
-
-    public void setText(String huntName) {
-        TextView view = findViewById(R.id.textView_maps_scavengerHuntName);
-        view.setText(huntName);
-    }
-
-
-    public void loadScavengerHuntTest() {
-        setText(scavengerHuntSingleton.getId());
-    }
 
     /**
      * Saves the progress "manually" and exits the ScavengerHunt-creation. Sends the user back to the title-screen.

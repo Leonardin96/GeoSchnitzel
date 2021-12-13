@@ -47,14 +47,15 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
         helper = new ScavengerHuntWithPoisHelper(this);
 
         hideSystemUI();
-        Log.i("getExtra", getIntent().getStringExtra("pressedBtn"));
         if (getIntent().getStringExtra("pressedBtn").equals("playBtn")) {
             setContentView(R.layout.activity_scavengerhunts_list);
             recyclerView = findViewById(R.id.recylerView_scavengerhuntlist);
             createList();
+            intent.putExtra("pressedBtn", "playBtn");
         } else {
             setContentView(R.layout.activity_schnitzeljagd_creation_start);
             getScavHuntCreationElements();
+            intent.putExtra("pressedBtn", "createBtn");
         }
     }
 
@@ -150,7 +151,6 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
                     @Override
                     public void onComplete(Object o) {
                         Boolean isTaken = (boolean) o;
-                        Log.i("isTaken", isTaken.toString());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -228,11 +228,8 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
         ScavengerHuntWithPois clickedHunt = hunts.get(position);
         ScavengerHuntSingleton.getInstance().setHunt(clickedHunt);
         ScavengerHuntSingleton.getInstance().setCreator(clickedHunt.scavengerHunt.creatorName);
-        ScavengerHuntSingleton.getInstance().setId(clickedHunt.scavengerHunt.scavengerHuntName)
-        ;
+        ScavengerHuntSingleton.getInstance().setId(clickedHunt.scavengerHunt.scavengerHuntName);
 
-
-        Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
 }

@@ -44,9 +44,6 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".PointOfInterestCreationActivity" />
-        <activity
-            android:name=".LocationActivity"
-            android:parentActivityName=".EntryActivity" />
 
         <service
             android:name=".LocationActivity"

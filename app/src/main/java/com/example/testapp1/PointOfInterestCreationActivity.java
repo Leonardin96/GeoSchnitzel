@@ -52,6 +52,7 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
         poi = singleton.getPoiFromList(poiNumber);
 
         toMapIntent = new Intent(this, MapsActivity.class);
+        toMapIntent.putExtra("pressedBtn", "createBtn");
 
 
         hideSystemUI();
