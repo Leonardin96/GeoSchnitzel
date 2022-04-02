@@ -39,7 +39,6 @@ public class LocationHelper {
     }
 
     public boolean checkPermission() {
-
         if (ActivityCompat.checkSelfPermission(appContext,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 &&  ActivityCompat.checkSelfPermission(appContext,

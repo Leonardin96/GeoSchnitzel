@@ -3,6 +3,7 @@ package com.example.testapp1.Helper;
 import android.util.Log;
 
 import com.example.testapp1.Entities.PointOfInterest;
+import com.example.testapp1.Entities.ScavengerHunt;
 import com.example.testapp1.Entities.ScavengerHuntWithPois;
 
 import java.util.ArrayList;
@@ -14,7 +15,8 @@ public class ScavengerHuntSingleton {
     private String huntId = "";
     private String creatorName = "";
 
-    private ScavengerHuntWithPois hunt = new ScavengerHuntWithPois();
+    private ScavengerHunt hunt = new ScavengerHunt();
+    private ScavengerHuntWithPois huntWithPois = new ScavengerHuntWithPois();
     private List<PointOfInterest> pois = new ArrayList<PointOfInterest>();
 
     private ScavengerHuntSingleton() {}
@@ -45,12 +47,16 @@ public class ScavengerHuntSingleton {
         this.creatorName = creator;
     }
 
-    public void setHunt(ScavengerHuntWithPois hunt) {
-        this.hunt = hunt;
+    public void setHunt(ScavengerHunt hunt) { this.hunt = hunt; }
+
+    public void setHuntWithPois(ScavengerHuntWithPois hunt) {
+        this.huntWithPois = hunt;
     }
 
-    public ScavengerHuntWithPois getHunt() {
-        return hunt;
+    public ScavengerHunt getHunt() { return hunt; }
+
+    public ScavengerHuntWithPois getHuntWithPois() {
+        return huntWithPois;
     }
 
     public PointOfInterest getPoiFromList(int position) {
@@ -81,6 +87,9 @@ public class ScavengerHuntSingleton {
     }
 
     public List<PointOfInterest> getPOIList() {
+        if (pois.size() == 0) {
+            pois = huntWithPois.pois;
+        }
         return pois;
     }
 }

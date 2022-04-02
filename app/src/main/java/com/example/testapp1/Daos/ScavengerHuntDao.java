@@ -41,7 +41,7 @@ public interface ScavengerHuntDao {
     public List<ScavengerHuntWithPois> loadAllHunts();
 
     @Transaction
-    @Query("SELECT * FROM ScavengerHunt WHERE scavengerHuntName LIKE :scavengerHuntName")
+    @Query("SELECT * FROM scavengerHunt WHERE scavengerHuntName LIKE :scavengerHuntName")
     public List<ScavengerHuntWithPois> loadScavengerHuntWithPOIs(String scavengerHuntName);
 
 }

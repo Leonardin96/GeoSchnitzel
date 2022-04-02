@@ -51,6 +51,7 @@ public class ScavengerHuntWithPoisHelper {
             @Override
             public void run() {
                 scavengerHuntDao.insertScavengerHunt(hunt);
+                ScavengerHuntSingleton.instance.setHunt(hunt);
                 callback.onComplete(null);
             }
         });
@@ -64,6 +65,16 @@ public class ScavengerHuntWithPoisHelper {
             @Override
             public void run() {
                 scavengerHuntDB.clearAllTables();
+            }
+        });
+    }
+
+    public void insertScavengerHunt(dataSetCallback callback, ScavengerHunt hunt) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                scavengerHuntDao.insertScavengerHunt(hunt);
+                callback.onComplete(null);
             }
         });
     }

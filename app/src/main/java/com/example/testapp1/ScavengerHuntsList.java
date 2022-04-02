@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.testapp1.Entities.ScavengerHunt;
 import com.example.testapp1.Entities.ScavengerHuntWithPois;
 import com.example.testapp1.Helper.ScavengerHuntWithPoisHelper;
 import com.example.testapp1.Helper.ScavengerHuntSingleton;
@@ -93,7 +94,6 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
                     @Override
                     public void run() {
                         hunts = list;
-                        // TODO: set empty adapter on main, then fill it as soon as the data is there
                         setAdapter(list);
                     }
                 });
@@ -226,7 +226,7 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
         ScavengerHuntSingleton.reset();
 
         ScavengerHuntWithPois clickedHunt = hunts.get(position);
-        ScavengerHuntSingleton.getInstance().setHunt(clickedHunt);
+        ScavengerHuntSingleton.getInstance().setHuntWithPois(hunts.get(position));
         ScavengerHuntSingleton.getInstance().setCreator(clickedHunt.scavengerHunt.creatorName);
         ScavengerHuntSingleton.getInstance().setId(clickedHunt.scavengerHunt.scavengerHuntName);
 

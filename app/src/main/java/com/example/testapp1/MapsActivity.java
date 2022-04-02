@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,6 +26,7 @@ import com.example.testapp1.Helper.ScavengerHuntSingleton;
 import com.example.testapp1.Helper.actionFinishedCallback;
 import com.example.testapp1.Entities.PointOfInterest;
 
+import com.example.testapp1.Helper.dataSetCallback;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -51,6 +53,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     private ScavengerHuntSingleton singleton;
     private ScavengerHuntSingleton scavengerHuntSingleton;
     private Intent toPOICreationIntent;
+    private Intent toTitleScreenIntent;
 
     // UI-Elements
     private Button button_create_poi;
@@ -72,6 +75,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         locationHelper = new LocationHelper(this);
         scavengerHuntSingleton = ScavengerHuntSingleton.getInstance();
         toPOICreationIntent = new Intent(this, PointOfInterestCreationActivity.class);
+        toTitleScreenIntent = new Intent(this, EntryActivity.class);
 
         // check which path the user took, display the corresponding layout and load the the corresponding hunt if needed
         checkIntent();
@@ -82,7 +86,9 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         mapFragment.getMapAsync(this);
 
         hideSystemUI();
-        toggleButtonClearance();
+        if (playMode == false) {
+            toggleButtonClearance();
+        }
         icon = BitmapDescriptorFactory.fromResource(R.mipmap.ic_marker_foreground);
         markerShown = 0;
     }
@@ -113,7 +119,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         } else {
             setContentView(R.layout.activity_maps_play);
             getPlayUIElements();
-            playableHunt = scavengerHuntSingleton.getHunt();
+            playableHunt = scavengerHuntSingleton.getHuntWithPois();
             playMode = true;
         }
     }
@@ -199,17 +205,16 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
                     if (location == null) {
                         return;
                     }
-                    if (pois != null) {
-                        float[] distanceBetween = new float[4];
-                        Location.distanceBetween(
-                                location.getLatitude(),
-                                location.getLongitude(),
-                                pois.get(markerShown).poiLocationLat,
-                                pois.get(markerShown).poiLocationLong,
-                                distanceBetween
-                        );
+                    if (pois != null && pois.size() > 0) {
 
-                        if (distanceBetween[0] < 5) {
+                        Location reference = new Location("point A");
+                        reference.setLatitude(pois.get(markerShown).poiLocationLat);
+                        reference.setLongitude(pois.get(markerShown).poiLocationLong);
+                        Float distanceToPOI = location.distanceTo(reference);
+                        Log.i("DistanceTo reference", Float.toString(distanceToPOI));
+
+                        if (distanceToPOI < 15) {
+                            Log.i("Listsize", Integer.toString(pois.size()));
                             googleMap.addMarker(new MarkerOptions()
                                     .position(new LatLng(pois.get(markerShown).poiLocationLat, pois.get(markerShown).poiLocationLong))
                             ).setTag(pois.get(markerShown));
@@ -267,7 +272,13 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
      * Saves the progress "manually" and exits the ScavengerHunt-creation. Sends the user back to the title-screen.
      */
     public void finishCreation(View view) {
-
+        helper.insertScavengerHunt(new dataSetCallback() {
+            @Override
+            public void onComplete(Object o) {
+                Log.i("Back to title", "Back to title please");
+                startActivity(toTitleScreenIntent);
+            }
+        }, scavengerHuntSingleton.getHunt());
     }
 
     public void setUpNewPOI(int poiNumber, String scavengerHuntName, Location loc) {
