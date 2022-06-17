@@ -5,22 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.testapp1.Entities.PointOfInterest;
 import com.example.testapp1.Helper.PoiHelper;
 import com.example.testapp1.Helper.ScavengerHuntSingleton;
-import com.example.testapp1.Helper.actionFinishedCallback;
-import com.example.testapp1.Helper.loadedListCallback;
-
-import java.util.List;
-import java.util.Map;
+import com.example.testapp1.Callbacks.actionFinishedCallback;
 
 import javax.security.auth.callback.Callback;
 
@@ -44,7 +37,7 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_poi_riddle_creation);
+        setContentView(R.layout.activity_poi_creation);
 
         poiNumber = getIntent().getExtras().getInt("poiNumber");
         poiHelper = new PoiHelper(this);
@@ -88,15 +81,15 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
      * Override POI in the singleton, save it in the DB and go back to MapsActivity.
      * @param view
      */
-    public void savePoi(View view) {
+    public void insertPoi(View view) {
         poi.poiRiddle = riddle.getText().toString();
         poi.poiName =  name.getText().toString();
+        poi.poiNumber = poiNumber;
 
-        singleton.overridePoi(poi, poiNumber);
-
-        poiHelper.savePoi(new actionFinishedCallback() {
+        poiHelper.insertPoi(new actionFinishedCallback() {
             @Override
             public void onComplete(Object o) {
+                singleton.overridePoi(poi, poiNumber);
                 toMapIntent.putExtra("poiNumber", poiNumber);
                 startActivity(toMapIntent);
             }

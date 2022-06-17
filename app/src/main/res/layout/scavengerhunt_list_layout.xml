@@ -7,7 +7,7 @@
     android:background="@drawable/recyclerview_item_background">
 
     <TextView
-        android:id="@+id/textView_scavengerhuntlist_layout_huntname"
+        android:id="@+id/textView_scavengerhuntslist_layout_huntname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -30,7 +30,7 @@
         android:fontFamily="@font/bowlby_one_sc"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView_scavengerhuntlist_layout_huntname"
-        app:layout_constraintTop_toBottomOf="@+id/textView_scavengerhuntlist_layout_huntname" />
+        app:layout_constraintStart_toStartOf="@+id/textView_scavengerhuntslist_layout_huntname"
+        app:layout_constraintTop_toBottomOf="@+id/textView_scavengerhuntslist_layout_huntname" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

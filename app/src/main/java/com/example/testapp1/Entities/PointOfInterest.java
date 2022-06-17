@@ -23,4 +23,7 @@ public class PointOfInterest {
     @ColumnInfo(defaultValue = "")
     public String poiName;
 
+    @ColumnInfo(defaultValue = "")
+    public Integer poiNumber;
+
 }

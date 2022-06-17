@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -16,18 +17,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.testapp1.Callbacks.actionFinishedCallback;
 import com.example.testapp1.Entities.ScavengerHunt;
 import com.example.testapp1.Entities.ScavengerHuntWithPois;
-import com.example.testapp1.Helper.ScavengerHuntWithPoisHelper;
+import com.example.testapp1.Helper.ScavengerHuntHelper;
 import com.example.testapp1.Helper.ScavengerHuntSingleton;
-import com.example.testapp1.Helper.VerticalSpaceItemDecoration;
-import com.example.testapp1.Helper.dataSetCallback;
-import com.example.testapp1.Helper.loadedListCallback;
-import com.example.testapp1.Helper.scavengerhuntListAdapter;
+import com.example.testapp1.Misc.VerticalSpaceItemDecoration;
+import com.example.testapp1.Callbacks.loadedListCallback;
+import com.example.testapp1.Adapter.scavengerhuntListAdapter;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
+import java.io.File;
 import java.util.List;
 
 public class ScavengerHuntsList extends AppCompatActivity implements scavengerhuntListAdapter.OnItemListener {
@@ -36,7 +35,7 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
     EditText editText_creatorName;
     Button button_done;
     Intent intent;
-    ScavengerHuntWithPoisHelper helper;
+    ScavengerHuntHelper helper;
     RecyclerView recyclerView;
 
     List<ScavengerHuntWithPois> hunts;
@@ -45,7 +44,7 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         intent = new Intent(this, MapsActivity.class);
-        helper = new ScavengerHuntWithPoisHelper(this);
+        helper = new ScavengerHuntHelper(this);
 
         hideSystemUI();
         if (getIntent().getStringExtra("pressedBtn").equals("playBtn")) {
@@ -75,9 +74,6 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
         getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
     }
 
-    /**
-     * Listener as to when the app regains the focus.
-     */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -86,8 +82,11 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
         }
     }
 
+    /**
+     * Creates the list of scavengerhunts for the recyclerView.
+     */
     public void createList() {
-        helper.loadAllHunts(new loadedListCallback<ScavengerHuntWithPois>() {
+        helper.getAllHunts(new loadedListCallback<ScavengerHuntWithPois>() {
             @Override
             public void onComplete(List<ScavengerHuntWithPois> list) {
                 runOnUiThread(new Runnable() {
@@ -102,8 +101,8 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
     };
 
     /**
-     * Set up the adapter for the recylerView to properly display all the scavengerhunts in the list.
-     * @param huntList
+     * Sets up the adapter for the recylerView to properly display all the scavengerhunts in the list.
+     * @param huntList {List}
      */
     private void setAdapter(List<ScavengerHuntWithPois> huntList) {
         scavengerhuntListAdapter adapter = new scavengerhuntListAdapter(huntList, this);
@@ -115,7 +114,7 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
     }
 
     /**
-    * Getting the layout elements when the correct layout is displayed.
+    * Gets the layout elements when the correct layout is displayed.
     */
     private void getScavHuntCreationElements() {
         editText_hunt_id = findViewById(R.id.editText_schnitzeljagdname);
@@ -127,7 +126,8 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
 
     /**
      * Checks if both input-Views have content and then enables the button to proceed.
-     * TODO: Check DB if hunt with this ID already exists. + onInput(?) Listeners for both input-Views.
+     * Also checks if the name of the scavengerhunt is already taken since it has to be unique.
+     * TODO: disable the checker when the input doesnt match with the the id anymore
      */
     private void toggleButtonClearance() {
         String huntID = editText_hunt_id.getText().toString().trim();
@@ -147,14 +147,14 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
 
             @Override
             public void afterTextChanged(Editable editable) {
-                helper.huntNameTaken(new dataSetCallback() {
+                helper.checkForName(new actionFinishedCallback() {
                     @Override
                     public void onComplete(Object o) {
                         Boolean isTaken = (boolean) o;
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (isTaken == true) {
+                                if (isTaken) {
                                     errorText.setVisibility(View.VISIBLE);
                                     if (creatorName != null && creatorName != "") {
                                         button_done.setEnabled(true);
@@ -194,25 +194,28 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
 
     /**
      * Empty all tables to create a clean slate.
-     * TODO: Hide this option, so users won't accidently- / over-use it.
      */
     public void deleteAllHunts(View view) {
-        helper.emtpyAllTables();
+        helper.emptyAllTables();
     }
 
     /**
     * Changing activity upon completed creation process.
+     * @param view {View}
     */
     public void setUpDone(View view) {
         // Reset the Singleton to get a fresh instance
         ScavengerHuntSingleton.reset();
+        ScavengerHuntSingleton.instantiate();
+        deleteCache(this);
 
-        helper.createEmptyHunt(new dataSetCallback() {
+        helper.createEmptyHunt(new actionFinishedCallback() {
             @Override
             public void onComplete(Object o) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        ScavengerHuntSingleton.instance.setHunt((ScavengerHunt) o);
                         startActivity(intent);
                     }
                 });
@@ -220,16 +223,50 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
         }, editText_hunt_id.getText().toString(), editText_creatorName.getText().toString());
     }
 
+    /**
+     * Deletes the cache of the application
+     * Used to counteract the error in correlation with the bug mentioned in the following issue on issuetracker.google.com:
+     * https://issuetracker.google.com/issues/219879780?pli=1
+     * @param context {Context}
+     */
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) { e.printStackTrace();}
+    }
+
+    /**
+     * Deletes the File provided.
+     * Helper function for the deleteCache function
+     * @param dir {File}
+     * @return boolean
+     */
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public void onItemClicked(int position) {
         // Reset the singleton to get a fresh instance
         ScavengerHuntSingleton.reset();
 
-        ScavengerHuntWithPois clickedHunt = hunts.get(position);
         ScavengerHuntSingleton.getInstance().setHuntWithPois(hunts.get(position));
-        ScavengerHuntSingleton.getInstance().setCreator(clickedHunt.scavengerHunt.creatorName);
-        ScavengerHuntSingleton.getInstance().setId(clickedHunt.scavengerHunt.scavengerHuntName);
 
+        deleteCache(this);
         startActivity(intent);
     }
 }

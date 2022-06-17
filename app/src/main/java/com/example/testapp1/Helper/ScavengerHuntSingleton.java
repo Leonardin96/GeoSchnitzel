@@ -32,34 +32,41 @@ public class ScavengerHuntSingleton {
     }
 
     public static synchronized void reset(){
+
         instance = new ScavengerHuntSingleton();
     }
 
     public static ScavengerHuntSingleton getInstance() {
+
         return instance;
     }
 
-    public void setId(String identifier) {
-        this.huntId = identifier;
-    }
+    public void setHunt(ScavengerHunt hunt) {
 
-    public void setCreator(String creator) {
-        this.creatorName = creator;
+        this.hunt = hunt;
+        this.huntId = hunt.scavengerHuntName;
+        this.creatorName = hunt.creatorName;
     }
-
-    public void setHunt(ScavengerHunt hunt) { this.hunt = hunt; }
 
     public void setHuntWithPois(ScavengerHuntWithPois hunt) {
+
         this.huntWithPois = hunt;
+        this.huntId = hunt.scavengerHunt.scavengerHuntName;
+        this.creatorName = hunt.scavengerHunt.creatorName;
     }
 
-    public ScavengerHunt getHunt() { return hunt; }
+    public ScavengerHunt getHunt() {
+
+        return hunt;
+    }
 
     public ScavengerHuntWithPois getHuntWithPois() {
+
         return huntWithPois;
     }
 
     public PointOfInterest getPoiFromList(int position) {
+
         return pois.get(position);
     }
 
@@ -71,24 +78,37 @@ public class ScavengerHuntSingleton {
     }
 
     public void overridePoi(PointOfInterest poi, int poiNumber) {
+
         this.pois.set(poiNumber, poi);
     }
 
+    public void overridePois(List<PointOfInterest> pois) {
+
+        this.pois = pois;
+    }
+
     public void removePoiFromList(int position) {
+
         this.pois.remove(position);
     }
 
     public String getId() {
+
         return huntId;
     }
 
     public String getCreatorName() {
+
         return creatorName;
     }
 
     public List<PointOfInterest> getPOIList() {
-        if (pois.size() == 0) {
-            pois = huntWithPois.pois;
+        if (pois != null) {
+            if (pois.size() == 0) {
+                pois = huntWithPois.pois;
+            }
+        } else {
+            this.pois = new ArrayList<PointOfInterest>();
         }
         return pois;
     }

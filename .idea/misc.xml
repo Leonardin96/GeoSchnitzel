@@ -3,8 +3,33 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable/button_close.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable/button_gradient_disabled.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable/button_gradient_red.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable/edittext_style.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable/ic_arrow_background.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable/ic_launcher_background.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable/ic_marker_background.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable/ic_trash-can_background.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable/ic_trash_can.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable/marker_icon.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable/recyclerview_item_background.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/drawable/recyclerview_item_background_interaction.xml" value="0.49269406392694065" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/activity_editing_pois.xml" value="0.3532608695652174" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/activity_entry.xml" value="0.3161231884057971" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/activity_location.xml" value="0.333786231884058" />
         <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/activity_maps.xml" value="0.31521739130434784" />
         <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/activity_maps_play.xml" value="0.31521739130434784" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/activity_poi_creation.xml" value="0.23667570009033423" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/activity_poi_creation_entry.xml" value="0.3446557971014493" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/activity_poi_editing.xml" value="0.3532608695652174" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/activity_poi_riddle_creation.xml" value="0.3446557971014493" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/activity_scavengerhunts_list.xml" value="0.35643115942028986" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/activity_schnitzeljagd_creation_start.xml" value="0.35643115942028986" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/edit_pois_list_layout.xml" value="0.3532608695652174" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/maps_popup_layout.xml" value="0.333786231884058" />
+        <entry key="..\:/Users/lenna/AndroidStudioProjects/ScavengerHunt/GeoSchnitzel/app/src/main/res/layout/scavengerhunt_list_layout.xml" value="0.3532608695652174" />
       </map>
     </option>
   </component>

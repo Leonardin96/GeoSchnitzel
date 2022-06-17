@@ -2,6 +2,7 @@ package com.example.testapp1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,13 +13,15 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.example.testapp1.Helper.LocationHelper;
+
 public class EntryActivity extends AppCompatActivity {
 
     private Intent scavengerHuntListIntent;
+
     // UI Elements
     private Button button_play;
     private Button button_create;
-    private ImageView image_title;
 
 
     @Override
@@ -29,12 +32,15 @@ public class EntryActivity extends AppCompatActivity {
         findUIElements();
         startWiggleAnimation();
 
+        LocationHelper locationHelper = new LocationHelper(this);
+        locationHelper.checkForLocationPermission(this);
+
         scavengerHuntListIntent = new Intent(this, ScavengerHuntsList.class);
 
     }
 
     /**
-     * Hide the Systems-UI not needed for the activity.
+     * Hides the Systems-UI not needed for the activity.
      */
     private void hideSystemUI() {
         View decorView = getWindow().getDecorView();
@@ -49,16 +55,15 @@ public class EntryActivity extends AppCompatActivity {
     }
 
     /**
-     * Collectivly search for all UI-Elements neccessary.
+     * Collectively searches for all UI-Elements necessary.
      */
     private void findUIElements() {
         button_play = findViewById(R.id.button_entry_play);
         button_create = findViewById(R.id.button_entry_create);
-        image_title = findViewById(R.id.imageView_entry_title_picture);
     }
 
     /**
-     * Starts the pulse-Animation for the buttons.
+     * Starts the wiggle-Animation for the buttons.
      */
     public void startWiggleAnimation() {
 
@@ -85,9 +90,6 @@ public class EntryActivity extends AppCompatActivity {
         button_play.startAnimation(wiggle);
     }
 
-    /**
-     * Listener as to when the app regains the focus.
-     */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -97,8 +99,9 @@ public class EntryActivity extends AppCompatActivity {
     }
 
     /**
-     * Called when the user taps the send button.
+     * Called when the user presses one of the buttons. Starts new activity based on the button pressed.
      */
+    @SuppressLint("NonConstantResourceId")
     public void changeActivity(View view) {
         switch(view.getId()) {
             case R.id.button_entry_create:

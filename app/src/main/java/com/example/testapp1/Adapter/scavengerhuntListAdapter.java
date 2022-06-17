@@ -1,9 +1,8 @@
-package com.example.testapp1.Helper;
+package com.example.testapp1.Adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.testapp1.Entities.ScavengerHuntWithPois;
 import com.example.testapp1.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class scavengerhuntListAdapter extends RecyclerView.Adapter<scavengerhuntListAdapter.ViewHolder> {
@@ -26,15 +24,15 @@ public class scavengerhuntListAdapter extends RecyclerView.Adapter<scavengerhunt
         this.myOnItemListener = onItemListener;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView scavengerhuntNameTxt;
-        private TextView creatorNameTxt;
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final TextView scavengerhuntNameTxt;
+        private final TextView creatorNameTxt;
 
         OnItemListener onItemListener;
 
         public ViewHolder(@NonNull View view, OnItemListener onItemListener) {
             super(view);
-            scavengerhuntNameTxt = view.findViewById(R.id.textView_scavengerhuntlist_layout_huntname);
+            scavengerhuntNameTxt = view.findViewById(R.id.textView_scavengerhuntslist_layout_huntname);
             creatorNameTxt = view.findViewById(R.id.textView_scavengerhuntlist_layout_creatorname);
             this.onItemListener = onItemListener;
 

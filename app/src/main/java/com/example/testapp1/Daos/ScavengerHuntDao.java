@@ -1,11 +1,14 @@
 package com.example.testapp1.Daos;
 
+import android.graphics.Point;
+
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 import com.example.testapp1.Entities.PointOfInterest;
 import com.example.testapp1.Entities.ScavengerHunt;
@@ -43,5 +46,8 @@ public interface ScavengerHuntDao {
     @Transaction
     @Query("SELECT * FROM scavengerHunt WHERE scavengerHuntName LIKE :scavengerHuntName")
     public List<ScavengerHuntWithPois> loadScavengerHuntWithPOIs(String scavengerHuntName);
+
+    @Update
+    public void updatePois(List<PointOfInterest> pois);
 
 }

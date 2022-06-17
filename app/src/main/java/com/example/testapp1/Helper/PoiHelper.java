@@ -2,6 +2,7 @@ package com.example.testapp1.Helper;
 
 import android.content.Context;
 
+import com.example.testapp1.Callbacks.actionFinishedCallback;
 import com.example.testapp1.Daos.ScavengerHuntDao;
 import com.example.testapp1.Database.ScavengerHuntDatabase;
 import com.example.testapp1.Entities.PointOfInterest;
@@ -12,28 +13,22 @@ import java.util.concurrent.Executors;
 
 
 public class PoiHelper {
-    private ScavengerHuntDatabase schnitzelDB;
-    private ScavengerHuntDao schnitzelDao;
-    private Executor executor;
+    private final ScavengerHuntDao schnitzelDao;
+    private final Executor executor;
 
 
     public PoiHelper(Context context) {
-        schnitzelDB = ScavengerHuntDatabase.getInstance(context);
+        ScavengerHuntDatabase schnitzelDB = ScavengerHuntDatabase.getInstance(context);
         schnitzelDao = schnitzelDB.SchnitzeljagdDao();
         executor = Executors.newSingleThreadExecutor();
     }
 
-    public void loadPOIs(final loadedListCallback<PointOfInterest> callback, final String schnitzeljagdName) {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                List<PointOfInterest> schnitzeljagdPOIs = schnitzelDao.loadPOIs(schnitzeljagdName);
-                callback.onComplete(schnitzeljagdPOIs);
-            }
-        });
-    }
-
-    public void savePoi(final actionFinishedCallback callback, final PointOfInterest poi) {
+    /**
+     * Saves a POI in the DB and calls the provided callback function.
+     * @param callback {actionFinishedCallback}
+     * @param poi {PointOfInterest}
+     */
+    public void insertPoi(final actionFinishedCallback callback, final PointOfInterest poi) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -43,11 +38,16 @@ public class PoiHelper {
         });
     }
 
-    public void saveMultiplePOIs(final actionFinishedCallback callback, PointOfInterest... pois) {
+    /**
+     * Updates one or more POIs based on the list provided
+     * @param callback {actionFinishedCallback}
+     * @param pois {List}
+     */
+    public void updatePois(final actionFinishedCallback callback, List<PointOfInterest> pois) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                schnitzelDao.saveMultiplePOIs(pois);
+                schnitzelDao.updatePois(pois);
                 callback.onComplete(null);
             }
         });

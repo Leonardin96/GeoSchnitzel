@@ -26,20 +26,21 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="64dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/edittext_style"
         android:fontFamily="@font/bowlbyonesc"
         android:hint="Emmys Birthdaypartyhunt..."
-        android:maxLength="30"
         android:inputType="text"
+        android:maxLength="30"
         android:maxLines="1"
-        android:textSize="16sp"
         android:paddingLeft="8dp"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/editText_creatorname"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guideline9" />
 
@@ -130,25 +131,28 @@
 
     <TextView
         android:id="@+id/textView9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
-        android:text="Name for the scavengerhunt"
         android:fontFamily="@font/bowlby_one_sc"
+        android:text="Name for the scavengerhunt"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/editText_schnitzeljagdname"
-        app:layout_constraintStart_toStartOf="@+id/editText_schnitzeljagdname" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/editText_schnitzeljagdname"
+        app:layout_constraintTop_toTopOf="@+id/guideline9" />
 
     <TextView
         android:id="@+id/textView10"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="32dp"
         android:layout_marginBottom="16dp"
-        android:text="Name of the creator"
         android:fontFamily="@font/bowlby_one_sc"
+        android:text="Name of the creator"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/editText_creatorname"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/editText_creatorname" />
 </androidx.constraintlayout.widget.ConstraintLayout>

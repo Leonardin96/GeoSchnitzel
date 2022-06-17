@@ -1,102 +1,98 @@
 package com.example.testapp1.Helper;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.example.testapp1.Callbacks.actionFinishedCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 public class LocationHelper {
     // Location related
     public FusedLocationProviderClient fusedLocationClient;
     public LocationCallback locationCallback;
-    public LocationRequest locationRequest;
-    public boolean requestingLocationUpdates = true;
-    public Location currentLocation;
 
     // miscellaneous
     Context appContext;
-    int toastDuration;
 
     public LocationHelper(Context context) {
         appContext = context;
-        toastDuration = Toast.LENGTH_SHORT;
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(appContext);
     }
 
-    public boolean checkPermission() {
-        if (ActivityCompat.checkSelfPermission(appContext,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                &&  ActivityCompat.checkSelfPermission(appContext,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(appContext, "You need to enable permissions to display location !", toastDuration).show();
-        } else {
-
+    /**
+     * Checks if the application has the permission to track the location of the user.
+     * @param activity {Activity}
+     * @return boolean
+     */
+    public boolean checkForLocationPermission(Activity activity) {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return true;
+        } else {
+            ActivityCompat.requestPermissions(
+                    activity,
+                    new String[] {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                    1
+            );
         }
 
         return false;
     }
 
-    public void setupLocationRequest(final LocationUpdate<Location> callback) {
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(5000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    //Update UI
-                    currentLocation = location;
-                    callback.onLocationUpdate(location);
-                }
-            }
-        };
-    }
-
-
-    @SuppressLint("MissingPermission")
-    public void getLastLocation(actionFinishedCallback callback) {
-        Task<Location> last_location = fusedLocationClient.getLastLocation()
-                .addOnSuccessListener((Activity) appContext, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            Log.i("Last Known Location", location.getLatitude() + " " + location.getLongitude());
-                            callback.onComplete(location);
+    /**
+     * Checks for the last known location and gives it to the provided callback.
+     * @param callback {actionFinishedCallback}
+     */
+    public void getLastLocation(actionFinishedCallback callback, Activity activity) {
+        boolean permissionGranted = checkForLocationPermission(activity);
+        if (permissionGranted) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener((Activity) appContext, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                callback.onComplete(location);
+                            }
                         }
-                    }
-                });
+                    });
+        }
+
     }
 
-    public void startLocationUpdates(LocationCallback locationCallback) {
-        boolean permissionGranted = checkPermission();
+    /**
+     * Starts location updates of the fusedLocationProviderClient.
+     * @param locationCallback {actionFinishedCallback}
+     * @param activity {Activity}
+     */
+    public void startLocationUpdates(LocationCallback locationCallback, Activity activity) {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest
+            .setInterval(1000)
+            .setPriority(100);
+        boolean permissionGranted = checkForLocationPermission(activity);
         if (permissionGranted == true) {
-            fusedLocationClient.requestLocationUpdates(locationRequest,
+            fusedLocationClient.requestLocationUpdates(
+                    locationRequest,
                     locationCallback,
                     Looper.getMainLooper());
         }
     }
 
+    /**
+     * Stops the location updates from the fusedLocationProviderClient.
+     */
     public void stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback);
     }
