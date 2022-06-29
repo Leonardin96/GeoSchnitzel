@@ -21,7 +21,7 @@
         tools:context=".MapsActivity" />
 
     <TextView
-        android:id="@+id/textView_maps_scavengerHuntObjective"
+        android:id="@+id/textView_popup_root_maps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,9 +28,10 @@ import com.example.testapp1.Callbacks.loadedListCallback;
 import com.example.testapp1.Adapter.scavengerhuntListAdapter;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ScavengerHuntsList extends AppCompatActivity implements scavengerhuntListAdapter.OnItemListener {
+public class ScavengerHuntsListActivity extends AppCompatActivity implements scavengerhuntListAdapter.OnItemListener {
     private static final int VERTICAL_ITEM_SPACE = 48;
     EditText editText_hunt_id;
     EditText editText_creatorName;
@@ -37,6 +39,7 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
     Intent intent;
     ScavengerHuntHelper helper;
     RecyclerView recyclerView;
+    scavengerhuntListAdapter mAdapter;
 
     List<ScavengerHuntWithPois> hunts;
 
@@ -47,15 +50,15 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
         helper = new ScavengerHuntHelper(this);
 
         hideSystemUI();
-        if (getIntent().getStringExtra("pressedBtn").equals("playBtn")) {
+        if (getIntent().getStringExtra("pressedBtn").equals("play")) {
             setContentView(R.layout.activity_scavengerhunts_list);
             recyclerView = findViewById(R.id.recylerView_scavengerhuntlist);
             createList();
-            intent.putExtra("pressedBtn", "playBtn");
+            intent.putExtra("pressedBtn", "play");
         } else {
             setContentView(R.layout.activity_schnitzeljagd_creation_start);
             getScavHuntCreationElements();
-            intent.putExtra("pressedBtn", "createBtn");
+            intent.putExtra("pressedBtn", "create");
         }
     }
 
@@ -105,12 +108,12 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
      * @param huntList {List}
      */
     private void setAdapter(List<ScavengerHuntWithPois> huntList) {
-        scavengerhuntListAdapter adapter = new scavengerhuntListAdapter(huntList, this);
+        mAdapter = new scavengerhuntListAdapter(huntList, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(VERTICAL_ITEM_SPACE));
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(mAdapter);
     }
 
     /**
@@ -127,10 +130,8 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
     /**
      * Checks if both input-Views have content and then enables the button to proceed.
      * Also checks if the name of the scavengerhunt is already taken since it has to be unique.
-     * TODO: disable the checker when the input doesnt match with the the id anymore
      */
     private void toggleButtonClearance() {
-        String huntID = editText_hunt_id.getText().toString().trim();
         String creatorName = editText_creatorName.getText().toString().trim();
         TextView errorText = findViewById(R.id.textView_list_huntname_taken_error);
 
@@ -160,12 +161,13 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
                                         button_done.setEnabled(true);
                                     }
                                 } else {
-                                    errorText.setVisibility(View.INVISIBLE);
+                                    errorText.setVisibility(View.GONE);
                                 }
                             }
                         });
                     }
                 }, editable.toString());
+
             }
         });
 
@@ -183,10 +185,11 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
             @Override
             public void afterTextChanged(Editable editable) {
                 String givenCreatorName = editable.toString();
-                Log.i("CreatorName:", "text changed:" + editable.toString());
 
-                if ((givenCreatorName != null && givenCreatorName != "") && (errorText.getVisibility() == View.INVISIBLE)) {
+                if ((givenCreatorName != null && givenCreatorName != "") && errorText.getVisibility() != View.VISIBLE) {
                     button_done.setEnabled(true);
+                } else {
+                    button_done.setEnabled(false);
                 }
             }
         });
@@ -197,6 +200,8 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
      */
     public void deleteAllHunts(View view) {
         helper.emptyAllTables();
+        hunts.clear();
+        mAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -259,6 +264,21 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
         }
     }
 
+    /**
+     * Brings the user back to the entry activity.
+     * @param view
+     */
+    public void goBack(View view) {
+        startActivity(new Intent(this, EntryActivity.class));
+    }
+
+    @Override
+    public void onDeleteClicked(int position) {
+        helper.deleteHunt(hunts.get(position));
+        hunts.remove(position);
+        mAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onItemClicked(int position) {
         // Reset the singleton to get a fresh instance
@@ -267,6 +287,17 @@ public class ScavengerHuntsList extends AppCompatActivity implements scavengerhu
         ScavengerHuntSingleton.getInstance().setHuntWithPois(hunts.get(position));
 
         deleteCache(this);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onItemLongClicked(int position) {
+        ScavengerHuntSingleton.reset();
+        ScavengerHuntSingleton.getInstance().setHuntWithPois((hunts.get(position)));
+
+        deleteCache(this);
+        Intent intent = new Intent(this, MapsActivity.class);
+        intent.putExtra("pressedBtn", "create");
         startActivity(intent);
     }
 }

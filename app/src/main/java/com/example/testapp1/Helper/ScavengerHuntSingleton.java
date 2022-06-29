@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScavengerHuntSingleton {
-    public static ScavengerHuntSingleton instance;
+    public static volatile ScavengerHuntSingleton instance;
 
     private String huntId = "";
     private String creatorName = "";
@@ -50,6 +50,7 @@ public class ScavengerHuntSingleton {
 
     public void setHuntWithPois(ScavengerHuntWithPois hunt) {
 
+        this.hunt = hunt.scavengerHunt;
         this.huntWithPois = hunt;
         this.huntId = hunt.scavengerHunt.scavengerHuntName;
         this.creatorName = hunt.scavengerHunt.creatorName;

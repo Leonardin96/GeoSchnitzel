@@ -1,10 +1,13 @@
 package com.example.testapp1;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MotionEventCompat;
 
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -32,7 +35,8 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
     private Location givenLocation;
     private Integer poiNumber;
     private PointOfInterest poi;
-    private Intent toMapIntent;
+    private Intent intent;
+    private Boolean fromMapsActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +48,18 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
         singleton = ScavengerHuntSingleton.getInstance();
         poi = singleton.getPoiFromList(poiNumber);
 
-        toMapIntent = new Intent(this, MapsActivity.class);
-        toMapIntent.putExtra("pressedBtn", "createBtn");
-
+        fromMapsActivity = getIntent().getExtras().getBoolean("fromMapsActivity");
 
         hideSystemUI();
-        getRiddleUIElements();
+        getUIElements();
+
+        if (fromMapsActivity) {
+            intent = new Intent(this, MapsActivity.class);
+            intent.putExtra("pressedBtn", "create");
+        } else {
+            intent = new Intent(this, EditingPoisActivity.class);
+            setUpInformation();
+        }
     }
 
     /**
@@ -70,11 +80,19 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
     /**
      * Collects the needed Layout-elements from the activity_poi_ridddle_creation-layout.
      */
-    public void getRiddleUIElements() {
+    public void getUIElements() {
         riddle = findViewById(R.id.editTextTextMultiLine_poicreation);
         name = findViewById(R.id.editTextTextMultiLine_poicreation2);
         btnCancel = findViewById(R.id.button_poicreation_cancel);
         btnDone = findViewById(R.id.button_poicreation_done);
+    }
+
+    /**
+     * Fills the layout with the information from the POI.
+     */
+    private void setUpInformation() {
+        riddle.setText(singleton.getPoiFromList(poiNumber).poiRiddle);
+        name.setText(singleton.getPoiFromList(poiNumber).poiName);
     }
 
     /**
@@ -90,8 +108,8 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
             @Override
             public void onComplete(Object o) {
                 singleton.overridePoi(poi, poiNumber);
-                toMapIntent.putExtra("poiNumber", poiNumber);
-                startActivity(toMapIntent);
+                intent.putExtra("poiNumber", poiNumber);
+                startActivity(intent);
             }
         }, poi);
     }
@@ -101,6 +119,7 @@ public class PointOfInterestCreationActivity extends AppCompatActivity implement
      * @param view
      */
     public void goBack(View view) {
-        startActivity(toMapIntent);
+
+        startActivity(intent);
     }
 }

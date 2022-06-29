@@ -76,6 +76,18 @@ public class ScavengerHuntHelper {
     }
 
     /**
+     * Deletes a specific hunt
+     */
+    public void deleteHunt(ScavengerHuntWithPois hunt) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                scavengerHuntDao.deleteHunt(hunt.scavengerHunt);
+            }
+        });
+    }
+
+    /**
      * Clears all tables of the DB.
      */
     public void emptyAllTables() {
@@ -96,10 +108,14 @@ public class ScavengerHuntHelper {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                ScavengerHunt hunt = scavengerHuntDao.loadSpecificHunt(huntname);
-                if (hunt != null) {
-                    callback.onComplete(true);
+                List<ScavengerHuntWithPois> hunts = scavengerHuntDao.loadAllHunts();
+                Boolean foundDuplicate = false;
+                for(ScavengerHuntWithPois hunt : hunts) {
+                    if (hunt.scavengerHunt.scavengerHuntName.equals(huntname)) {
+                        foundDuplicate = true;
+                    }
                 }
+                callback.onComplete(foundDuplicate);
             }
         });
     }

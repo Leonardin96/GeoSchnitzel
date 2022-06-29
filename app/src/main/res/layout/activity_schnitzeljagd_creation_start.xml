@@ -16,6 +16,7 @@
         android:text="Start the creation by giving the hunt a name and stating the name of the creator"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/title_color"
         app:layout_constraintBottom_toTopOf="@+id/guideline9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,7 +27,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="64dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/edittext_style"
         android:fontFamily="@font/bowlbyonesc"
@@ -38,42 +38,41 @@
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/editText_creatorname"
+        app:layout_constraintBottom_toTopOf="@+id/textView_list_huntname_taken_error"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideline9" />
+        app:layout_constraintTop_toBottomOf="@+id/textView9"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/editText_creatorname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="144dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/edittext_style"
         android:fontFamily="@font/bowlbyonesc"
         android:hint="Max Mustermann..."
+        android:inputType="text"
+        android:maxLength="30"
+        android:maxLines="1"
         android:paddingLeft="8dp"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
-        android:maxLength="30"
-        android:inputType="text"
-        android:maxLines="1"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_schnitzeljagdname" />
+        app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
     <Button
         android:id="@+id/button_schnitzeljagdcreation_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:background="@drawable/button_gradient_red"
+        android:background="@drawable/button_gradient_yellow"
         android:fontFamily="@font/bowlbyonesc"
+        android:onClick="goBack"
         android:text="cancel"
         android:textColor="@color/button_textcolor"
         android:textSize="14sp"
@@ -107,7 +106,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.8" />
+        app:layout_constraintGuide_percent="0.75" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline9"
@@ -118,41 +117,56 @@
 
     <TextView
         android:id="@+id/textView_list_huntname_taken_error"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/textView_huntName_taken_error"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:fontFamily="@font/bowlbyonesc"
+        android:text="@string/textView_huntName_taken_error"
         android:textColor="#cf2929"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guideline11"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_schnitzeljagdname"
-        android:visibility="invisible"/>
+        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintStart_toStartOf="@+id/editText_schnitzeljagdname"
+        app:layout_constraintTop_toBottomOf="@+id/editText_schnitzeljagdname" />
 
     <TextView
         android:id="@+id/textView9"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:fontFamily="@font/bowlby_one_sc"
         android:text="Name for the scavengerhunt"
+        android:textColor="@color/text_color"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/editText_schnitzeljagdname"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/editText_schnitzeljagdname"
-        app:layout_constraintTop_toTopOf="@+id/guideline9" />
+        app:layout_constraintTop_toTopOf="@+id/guideline9"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/textView10"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="8dp"
         android:fontFamily="@font/bowlby_one_sc"
         android:text="Name of the creator"
+        android:textColor="@color/text_color"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/editText_creatorname"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/editText_creatorname" />
+        app:layout_constraintStart_toStartOf="@+id/editText_creatorname"
+        app:layout_constraintTop_toTopOf="@+id/guideline11"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.example.testapp1.Adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,6 @@ import com.example.testapp1.Entities.PointOfInterest;
 import com.example.testapp1.Callbacks.ItemMoveCallback;
 import com.example.testapp1.R;
 
-import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class poiEditingListAdapter extends RecyclerView.Adapter<poiEditingListAd
         View rowView;
         private final TextView mTitle;
         private final ImageButton deleteBtn;
-        private WeakReference<ClickListener> listenerRef;
+        ClickListener listener;
 
         public MyViewHolder(@NonNull View itemView, ClickListener clickListener) {
             super(itemView);
@@ -36,13 +36,20 @@ public class poiEditingListAdapter extends RecyclerView.Adapter<poiEditingListAd
             rowView = itemView;
             mTitle = itemView.findViewById(R.id.textView_edit_pois_layout_poi_name);
             deleteBtn = itemView.findViewById(R.id.imageButton_poi_delete);
+            this.listener = clickListener;
 
+            itemView.setOnClickListener(this);
             deleteBtn.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            listenerRef.get().onPositionClicked(getAdapterPosition());
+            if (view.getTag() != null && view.getTag().toString().equals("imageButton_poi_delete")) {
+                listener.onDeleteClicked(getAdapterPosition());
+            } else {
+                listener.onItemClicked(getAdapterPosition());
+            }
+
         }
     }
 
@@ -97,7 +104,8 @@ public class poiEditingListAdapter extends RecyclerView.Adapter<poiEditingListAd
     }
 
     public interface ClickListener {
-        void onPositionClicked(int position);
+        void onDeleteClicked(int position);
+        void onItemClicked(int position);
     }
 
 

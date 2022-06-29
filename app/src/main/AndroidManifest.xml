@@ -26,7 +26,7 @@
         <activity
             android:name=".EditingPoisActivity"
             android:exported="false" />
-        <activity android:name=".ScavengerHuntsList" />
+        <activity android:name=".ScavengerHuntsListActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -46,11 +46,6 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".PointOfInterestCreationActivity" />
-
-        <service
-            android:name=".LocationActivity"
-            android:exported="false"
-            android:foregroundServiceType="location" />
 
         <activity android:name=".EntryActivity">
             <intent-filter>

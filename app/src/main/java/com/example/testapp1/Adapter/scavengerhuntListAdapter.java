@@ -3,6 +3,7 @@ package com.example.testapp1.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,8 +16,8 @@ import java.util.List;
 
 public class scavengerhuntListAdapter extends RecyclerView.Adapter<scavengerhuntListAdapter.ViewHolder> {
 
-    private List<ScavengerHuntWithPois> huntList;
-    private OnItemListener myOnItemListener;
+    private final List<ScavengerHuntWithPois> huntList;
+    private final OnItemListener myOnItemListener;
 
 
     public scavengerhuntListAdapter(List<ScavengerHuntWithPois> huntList, OnItemListener onItemListener) {
@@ -27,6 +28,7 @@ public class scavengerhuntListAdapter extends RecyclerView.Adapter<scavengerhunt
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView scavengerhuntNameTxt;
         private final TextView creatorNameTxt;
+        private final ImageButton deleteButton;
 
         OnItemListener onItemListener;
 
@@ -34,14 +36,20 @@ public class scavengerhuntListAdapter extends RecyclerView.Adapter<scavengerhunt
             super(view);
             scavengerhuntNameTxt = view.findViewById(R.id.textView_scavengerhuntslist_layout_huntname);
             creatorNameTxt = view.findViewById(R.id.textView_scavengerhuntlist_layout_creatorname);
+            deleteButton = view.findViewById(R.id.imageButton_list_delete);
             this.onItemListener = onItemListener;
 
             view.setOnClickListener(this);
+            deleteButton.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            onItemListener.onItemClicked(getAdapterPosition());
+            if (view.getTag() != null && view.getTag().toString().equals("imageButton_list_delete")) {
+                onItemListener.onDeleteClicked(getAdapterPosition());
+            } else {
+                onItemListener.onItemClicked(getAdapterPosition());
+            }
         }
     }
 
@@ -60,6 +68,15 @@ public class scavengerhuntListAdapter extends RecyclerView.Adapter<scavengerhunt
 
         holder.scavengerhuntNameTxt.setText(huntName);
         holder.creatorNameTxt.setText(creatorName);
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View view) {
+                myOnItemListener.onItemLongClicked(position);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -69,7 +86,9 @@ public class scavengerhuntListAdapter extends RecyclerView.Adapter<scavengerhunt
     }
 
     public interface OnItemListener {
+        void onDeleteClicked(int position);
         void onItemClicked(int position);
+        void onItemLongClicked(int position);
     }
 
 

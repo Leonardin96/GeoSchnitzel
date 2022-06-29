@@ -7,6 +7,7 @@ import com.example.testapp1.Daos.ScavengerHuntDao;
 import com.example.testapp1.Database.ScavengerHuntDatabase;
 import com.example.testapp1.Entities.PointOfInterest;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -39,6 +40,21 @@ public class PoiHelper {
     }
 
     /**
+     * Deletes a specific POI
+     * @param callback {actionFinishedCallback}
+     * @param poi {PointOfInterest}
+     */
+    public void deletePoi(final actionFinishedCallback callback, final PointOfInterest poi) {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                schnitzelDao.deletePoi(poi);
+                callback.onComplete(null);
+            }
+        });
+    }
+
+    /**
      * Updates one or more POIs based on the list provided
      * @param callback {actionFinishedCallback}
      * @param pois {List}
@@ -47,7 +63,7 @@ public class PoiHelper {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                schnitzelDao.updatePois(pois);
+                schnitzelDao.saveMultiplePOIs(pois);
                 callback.onComplete(null);
             }
         });

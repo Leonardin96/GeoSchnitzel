@@ -28,7 +28,13 @@ public interface ScavengerHuntDao {
     public void insertPOI(PointOfInterest poi);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void saveMultiplePOIs(PointOfInterest... pois);
+    public void saveMultiplePOIs(List<PointOfInterest> pois);
+
+    @Delete
+    public void deletePoi(PointOfInterest poi);
+
+    @Delete
+    public void deleteHunt(ScavengerHunt hunt);
 
     @Query("DELETE FROM scavengerhunt")
     public void deleteAllHunts();

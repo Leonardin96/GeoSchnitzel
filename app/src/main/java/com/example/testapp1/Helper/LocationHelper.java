@@ -39,23 +39,25 @@ public class LocationHelper {
     public boolean checkForLocationPermission(Activity activity) {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return true;
-        } else {
-            ActivityCompat.requestPermissions(
-                    activity,
-                    new String[] {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
-                    1
-            );
         }
 
         return false;
     }
+
+    public void requestLocationPermission(Activity activity) {
+        ActivityCompat.requestPermissions(
+                activity,
+                new String[] {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                1
+        );
+    };
 
 
     /**
      * Checks for the last known location and gives it to the provided callback.
      * @param callback {actionFinishedCallback}
      */
-    public void getLastLocation(actionFinishedCallback callback, Activity activity) {
+    public void getSingleLocation(actionFinishedCallback callback, Activity activity) {
         boolean permissionGranted = checkForLocationPermission(activity);
         if (permissionGranted) {
             fusedLocationClient.getLastLocation()
@@ -82,7 +84,7 @@ public class LocationHelper {
             .setInterval(1000)
             .setPriority(100);
         boolean permissionGranted = checkForLocationPermission(activity);
-        if (permissionGranted == true) {
+        if (permissionGranted) {
             fusedLocationClient.requestLocationUpdates(
                     locationRequest,
                     locationCallback,

@@ -20,13 +20,15 @@ import com.example.testapp1.Misc.VerticalSpaceItemDecoration;
 import com.example.testapp1.Callbacks.actionFinishedCallback;
 import com.example.testapp1.Adapter.poiEditingListAdapter;
 
+import java.util.Collection;
 import java.util.List;
 
-public class EditingPoisActivity extends AppCompatActivity {
+public class EditingPoisActivity extends AppCompatActivity implements poiEditingListAdapter.ClickListener {
 
     PoiHelper poiHelper;
 
     Intent toMapIntent;
+    Intent toPoiCreationIntent;
 
     private static final int VERTICAL_ITEM_SPACE = 48;
     RecyclerView recyclerView;
@@ -41,7 +43,9 @@ public class EditingPoisActivity extends AppCompatActivity {
         poiHelper = new PoiHelper(this);
 
         toMapIntent = new Intent(this, MapsActivity.class);
-        toMapIntent.putExtra("pressedBtn", "createBtn");
+        toMapIntent.putExtra("pressedBtn", "create");
+
+        toPoiCreationIntent = new Intent(this, PointOfInterestCreationActivity.class);
 
         hideSystemUI();
         recyclerView = findViewById(R.id.recyclerView_editing_pois);
@@ -54,15 +58,8 @@ public class EditingPoisActivity extends AppCompatActivity {
      */
     private void setupRecyclerView() {
 
-        mAdapter = new poiEditingListAdapter(pois, new poiEditingListAdapter.ClickListener() {
-            @Override
-            public void onPositionClicked(int position) {
-
-            }
-        });
+        mAdapter = new poiEditingListAdapter(pois, this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-
-        Log.d("mAdapterData before swap", pois.get(0).poiName);
 
         ItemTouchHelper.Callback callback = new ItemMoveCallback(mAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
@@ -100,7 +97,6 @@ public class EditingPoisActivity extends AppCompatActivity {
             dataRef.get(iterator).poiNumber = iterator;
         }
 
-
         poiHelper.updatePois(new actionFinishedCallback() {
             @Override
             public void onComplete(Object o) {
@@ -108,5 +104,29 @@ public class EditingPoisActivity extends AppCompatActivity {
                 startActivity(toMapIntent);
             }
         }, dataRef);
+    }
+
+    @Override
+    public void onDeleteClicked(int position) {
+        poiHelper.deletePoi(new actionFinishedCallback() {
+            @Override
+            public void onComplete(Object o) {
+                ScavengerHuntSingleton.getInstance().removePoiFromList(position);
+                pois = ScavengerHuntSingleton.getInstance().getPOIList();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }, pois.get(position));
+    }
+
+    @Override
+    public void onItemClicked(int position) {
+        toPoiCreationIntent.putExtra("fromMapsActivity", false);
+        toPoiCreationIntent.putExtra("poiNumber", position);
+        startActivity(toPoiCreationIntent);
     }
 }

@@ -15,6 +15,7 @@
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/bowlbyonesc"
         android:text="TextView"
+        android:textColor="@color/text_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/imageButton_poi_delete"
         app:layout_constraintHorizontal_bias="0.5"
@@ -25,6 +26,7 @@
 
     <ImageButton
         android:id="@+id/imageButton_poi_delete"
+        android:tag="imageButton_poi_delete"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"

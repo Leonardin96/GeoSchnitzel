@@ -6,8 +6,10 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -89,6 +91,24 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         markerShown = 0;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (mMap != null && scavengerHuntSingleton.getPOIList() != null && scavengerHuntSingleton.getPOIList().size() > 0) {
+            List<PointOfInterest> pois = scavengerHuntSingleton.getPOIList();
+            PointOfInterest lastPoiInList = pois.get(pois.size() - 1);
+                mMap.clear();
+                for(PointOfInterest poi : pois) {
+                    addMarker(mMap, poi);
+                }
+                toggleButtonClearance();
+        }
+        if ( mMap != null && scavengerHuntSingleton.getPOIList().size() == 0) {
+            mMap.clear();
+        }
+    }
+
     /**
      * Hides the System-UI (Navigation-Bar and Menu-Bar).
      */
@@ -108,13 +128,12 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
      * Checks with path the user took and then shows the according UI.
      */
     private void checkIntent() {
-        if (getIntent().getStringExtra("pressedBtn").equals("createBtn")) {
+        if (getIntent().getStringExtra("pressedBtn").equals("create")) {
             setContentView(R.layout.activity_maps);
             getCreateUIElements();
             playMode = false;
-        } else {
+        } else if (getIntent().getStringExtra("pressedBtn").equals("play")){
             setContentView(R.layout.activity_maps_play);
-            getPlayUIElements();
             ScavengerHuntWithPois playableHunt = scavengerHuntSingleton.getHuntWithPois();
             playMode = true;
         }
@@ -137,14 +156,6 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
     private void getCreateUIElements() {
         button_create_poi = findViewById(R.id.button_maps_create_poi);
         button_edit_poi = findViewById(R.id.button_maps_edit_poi);
-        Button button_creation_done = findViewById(R.id.button_maps_finish_creation);
-    }
-
-    /**
-     * Get all necessary UI-Elements for the play mode.
-     */
-    private void getPlayUIElements() {
-        // TODO: get the UI Elements required for playing
     }
 
     /**
@@ -180,7 +191,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
-        locationHelper.getLastLocation(new actionFinishedCallback() {
+        locationHelper.getSingleLocation(new actionFinishedCallback() {
             @Override
             public void onComplete(Object o) {
                 Location loc = (Location) o;
@@ -188,6 +199,7 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
             }
         }, this);
+
         ;
         if (playMode) {
             LocationCallback locationCallback = new LocationCallback() {
@@ -197,16 +209,15 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
                         return;
                     }
-                    for (Location location : locationResult.getLocations()) {
-                        if (markerShown < locationResult.getLocations().size()) {
-                            double distance = calculateDistanceToNextPoi(location, pois.get(markerShown));
 
-                            if (distance < 15 && markerShown == pois.get(markerShown).poiNumber) {
-                                googleMap.addMarker(new MarkerOptions()
-                                        .position(new LatLng(pois.get(markerShown).poiLocationLat, pois.get(markerShown).poiLocationLong))
-                                ).setTag(pois.get(markerShown));
-                                markerShown++;
-                            }
+                    if(markerShown < pois.size()) {
+                        double distance = calculateDistanceToNextPoi(locationResult.getLastLocation(), pois.get(markerShown));
+
+                        if (distance < 15 && markerShown == pois.get(markerShown).poiNumber) {
+                            googleMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(pois.get(markerShown).poiLocationLat, pois.get(markerShown).poiLocationLong))
+                            ).setTag(pois.get(markerShown));
+                            markerShown++;
                         }
                     }
                 }
@@ -215,25 +226,18 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
         }
 
         if (!playMode) {
-            for(int iterator = 0; iterator < pois.size(); iterator++) {
-                poiCoordinates.add(
-                        new LatLng(pois.get(iterator).poiLocationLat, pois.get(iterator).poiLocationLong)
-                );
-            }
 
-            for(int iterator = 0; iterator < poiCoordinates.size(); iterator++) {
-                googleMap.addMarker(new MarkerOptions()
-                        .position(poiCoordinates.get(iterator))
-                ).setTag(pois.get(iterator));
+            for(int iterator = 0; iterator < pois.size(); iterator++) {
+                addMarker(googleMap, pois.get(iterator));
             }
         }
 
         mMap.setOnMarkerClickListener(marker -> {
             LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-            View popupView = inflater.inflate(R.layout.maps_popup_layout, null);
+            View popupView = inflater.inflate(R.layout.popup_layout, null);
 
-            final PopupWindow popupWindow = new PopupWindow(popupView, ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT,true);
-            popupWindow.showAtLocation(findViewById(R.id.textView_maps_scavengerHuntObjective), Gravity.CENTER, 0, 0);
+            final PopupWindow popupWindow = new PopupWindow(popupView, ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT, true);
+            popupWindow.showAtLocation(findViewById(R.id.textView_popup_root_maps), Gravity.CENTER, 0, 0);
             popupView.setOnTouchListener(new View.OnTouchListener() {
                 @SuppressLint("ClickableViewAccessibility")
                 @Override
@@ -245,15 +249,28 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
             PointOfInterest associatedPoi = (PointOfInterest) marker.getTag();
 
-            TextView popupTitleTextView = popupWindow.getContentView().findViewById(R.id.textView_maps_popup_title);
+            TextView popupTitleTextView = popupWindow.getContentView().findViewById(R.id.textView_popup_title);
             popupTitleTextView.setText(associatedPoi.poiName);
 
-            TextView popupRiddleTextView = popupWindow.getContentView().findViewById(R.id.textView_maps_popup_text);
+            TextView popupRiddleTextView = popupWindow.getContentView().findViewById(R.id.textView_popup_text);
             popupRiddleTextView.setText(associatedPoi.poiRiddle);
+
+            popupWindow.getContentView().findViewById(R.id.button_popup).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popupWindow.dismiss();
+                }
+            });
 
             return false;
         });
     };
+
+    public void addMarker(GoogleMap gM,  PointOfInterest poi) {
+        LatLng ll = new LatLng(poi.poiLocationLat, poi.poiLocationLong);
+
+        gM.addMarker(new MarkerOptions().position(ll)).setTag(poi);
+    }
 
     /**
      * Calculates the distances between the provided poi and the provided location.
@@ -279,13 +296,13 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
      * @param view {View}
      */
     public void finishCreation(View view) {
-        helper.insertScavengerHunt(new actionFinishedCallback() {
-            @Override
-            public void onComplete(Object o) {
-                startActivity(toTitleScreenIntent);
-            }
-        }, scavengerHuntSingleton.getHunt());
-    }
+            helper.insertScavengerHunt(new actionFinishedCallback() {
+                @Override
+                public void onComplete(Object o) {
+                    startActivity(toTitleScreenIntent);
+                }
+            }, scavengerHuntSingleton.getHunt());
+        }
 
     public void setUpNewPOI(int poiNumber, String scavengerHuntName, Location loc) {
 
@@ -314,13 +331,14 @@ public class MapsActivity extends FragmentActivity implements GoogleMap.OnMyLoca
 
         final int poiNumber = fakeMarkerNumber;
 
-        locationHelper.getLastLocation(new actionFinishedCallback() {
+        locationHelper.getSingleLocation(new actionFinishedCallback() {
             @Override
             public void onComplete(Object o) {
                 Location loc = (Location) o;
 
                 setUpNewPOI(poiNumber, scavengerHuntSingleton.getId(), loc);
 
+                toPOICreationIntent.putExtra("fromMapsActivity", true);
                 toPOICreationIntent.putExtra("poiNumber", poiNumber);
                 startActivity(toPOICreationIntent);
             }
